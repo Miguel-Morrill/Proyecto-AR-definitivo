@@ -212,6 +212,7 @@ library(normtest)
 library(crop)
 library(lubridate)
 library(ggplot2)
+library(moments)
 library(tibble)
 ```
 ```{r}
@@ -310,67 +311,98 @@ vap_2021
 
 Teoria que nosotros hemos visto sobre la normalidad del rendimiento y del los del precio
 
+Se sabe que los rendimientos de los precios de un activo pueden ser modelados como un proceso de Itô. Un proceso de Itô es un proceso estocástico derivado de un proceso Generalizado de Wiener, donde los cambios entre cada intervalo de tiempo se distribuyen siempre como una variable Normal con media 0 y varianza 1 ($N(0,1)$). Entonces se puede enunciar que los rendimientos se comportan de forma normal.
+
 Pruebas formales de normalidad
 
-Hay muchas pruebas de formalidad, la mas conocida y la mas usada se llama Jarque Bera
+Para poder demostrar que efectivamente nuestros rendimientos se comportan de forma normal, es importante realizar pruebas formales de normalidad.
 
-Esta prueba compara el sesgo y la curtosis de la distribución que analizamos con la de una distribución normal. En una normal el sesgo es cero y la curtosis es 3
+Hay muchas pruebas de normalidad, la mas conocida y la mas usada se llama Jarque-Bera.
+Esta prueba compara el sesgo y la curtosis de la distribución que analizamos con la de una distribución normal. En una normal el sesgo es cero y la curtosis es 3.
+Se enuncia una hipótesis nula y una hipótesis alternativa, respectivamente:
 
-Ho: Hay normalidad en la variable
+- Ho: Hay normalidad en la variable
 
-Ha: No hay normalidad en la variable
+- Ha: No hay normalidad en la variable
 
-Esta prueba considera que se rechaza Ho, cuando el valor estadistico es mayor a 9.2130
+Esta prueba considera que se rechaza Ho, cuando el valor estadistico es mayor a 9.2130.
+Si hacemos la prueba para todo el intervalo del tiempo desde el 2016 hasta la fecha:
 
-Si hacemos la prueba para todo el intervalo del tiempo desde el 2016 hasta la fecha
-```{r}
-library(moments)
-```
 ```{r}
 jbr <- jarque.test(as.numeric(rendimiento))
 jbr[['statistic']]
 ```
-Como la regla dice si el estadistico que calculamos es mayor a 9.2130 rechazamos Ho. En este caso 4112.487 es mayor a 9.2130, entonces rechazo Ho. Por lo tanto NO HAY NORMALIDAD
+Como la regla dice si el estadistico que calculamos es mayor a 9.2130 rechazamos Ho. En este caso 4102.59 es mayor a 9.2130, entonces rechazo Ho. Por lo tanto NO HAY NORMALIDAD.
+Realizando la misma prueba Jarque-Bera para el precio:
 
 ```{r}
 jbp <- jarque.test(as.numeric(precio))
 jbp[['statistic']]
 ```
+También se obtiene un valor mayor a 9.2130, por lo que los precios tampoco son normales.
+Por último, realizando prueba de normalidad para el logaritmo del precio:
+
 ```{r}
 jbl <- jarque.test(as.numeric(log(precio)))
 jbl[['statistic']]
 ```
+Se obtiene nuevamente un valor mayor a 9.2130, por lo que se rechaza normalidad también.
 
-```{r}
-jbr_2016 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2016]))
-jbr_2016[['statistic']]
-```
-
-```{r}
-jbr_2017 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2017]))
-jbr_2017[['statistic']]
-```
-```{r}
-jbr_2018 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2018]))
-jbr_2018[['statistic']]
-```
-```{r}
-jbr_2019 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2019]))
-jbr_2019[['statistic']]
-```
-```{r}
-jbr_2020 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2020]))
-jbr_2020[['statistic']]
-```
-```{r}
-jbr_2021 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2021]))
-jbr_2021[['statistic']]
-```
-La curtosis es lo alto de la distribución
+Una prueba rápida de curtosis nos permite conocer si también la distribución es normal. Recordando, en una distribución normal la Curtosis debe ser **3**.
 ```{r}
 kurtosis(rendimiento)
 skewness(rendimiento)
 ```
+Desgraciadamente, para todos los periodos la Curtosis no es 3, es 12.12, por lo que se confirma que la distribución no es normal.
+
+A continuación se realizarán pruebas de normalidad Jarque-Bera y Curtosis para todos los periodos de 2016 a 2021, con el fin de encontrar si en algún periodo se distribuyeron de forma normal.
+
+
+```{r}
+jbr_2016 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2016]))
+jbr_2016[['statistic']]
+kurtosis(as.numeric(rendimiento[year(rendimiento)==2016]))
+```
+Para el 2016, los rendimientos son casi **Normales**, con un una Ho aceptada y Curtosis ligeramente mayor a la Normal.
+
+```{r}
+jbr_2017 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2017]))
+jbr_2017[['statistic']]
+kurtosis(as.numeric(rendimiento[year(rendimiento)==2017]))
+```
+Para el 2017, los rendimientos son casi **Normales**, con un una Ho aceptada y Curtosis ligeramente mayor a la Normal.
+
+```{r}
+jbr_2018 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2018]))
+jbr_2018[['statistic']]
+kurtosis(as.numeric(rendimiento[year(rendimiento)==2018]))
+```
+Para el 2018, los rendimientos **No son normales**.
+
+```{r}
+jbr_2019 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2019]))
+jbr_2019[['statistic']]
+kurtosis(as.numeric(rendimiento[year(rendimiento)==2019]))
+```
+Para el 2019, los rendimientos **No son normales**.
+
+```{r}
+jbr_2020 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2020]))
+jbr_2020[['statistic']]
+kurtosis(as.numeric(rendimiento[year(rendimiento)==2020]))
+```
+Para el 2020, los rendimientos **No son normales**.
+
+```{r}
+jbr_2021 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2021]))
+jbr_2021[['statistic']]
+kurtosis(as.numeric(rendimiento[year(rendimiento)==2021]))
+```
+
+Lo que va del 2021, sus rendmientos son casi **Normales**, con una Ho aceptada y Curtosis ligeramente mayor a 3.
+
+
+
 
 # Rendimiento cero
 
@@ -379,42 +411,52 @@ Saber si estadsticamente el valor del rendimiento es cero
 Ho: Media = 0
 Ha: Media es diferente de cero
 
-Tenemor un estadistico, que se llama t de student. Si el estadistico que me de R (calculemos) es mayor a 2.3295, rechazar Ho.
+Tenemos un estadístico, que se llama t de Student. Si el estadístico que me de R es mayor a 2.3295, rechazar Ho.
 
 Para todo el periodo vamos a tener este comportamiento
 ```{r}
 t <- t.test(as.numeric(rendimiento))
 t[['statistic']]
 ```
-En este caso el estadistico es 0.7539823 por lo cual mi cinclusión es que no puedo rechazar Ho. 
+En este caso el estadístico es 0.7539823 por lo cual mi conclusión es que no puedo rechazar Ho, por lo tanto, el rendmiento es cero.
+A continuación se realizarán las pruebas t de Student para todos los periodos y ver si los rendimientos son cero.
 
 ```{r}
-t_2016 <- t.test(as.numeric(rendimiento[year(rendimiento)==2016]))
+aux <- 0
+for (annum in c(2016,2017,2018,2019,2020,2021))
+  {
+  aux <- t.test(as.numeric(rendimiento[year(rendimiento)==annum]))
+  print(aux[['statistic']])+print(annum) 
+  aux <- 0
+}
 
-t_2016[['statistic']]
+
 ```
+Puedo claramente observar para todos los periodos que la Ho de la prueba t de Student se acepta, por lo que los rendimientos de todos serán cero.
 
 # Simulaciones
  
 ## Ecuación ds en terminos diarios (parametros son diarios)
 
+Para la primera ronda de simulaciones, se creará una ecuación usando los parámetros diarios calculados a partir del 2020, y se utilizará para simular el comportamiento del precio de 10, 20 y 40 días con un intervalo de confianza al 95%.
+La ecuación tiene que ser:
+$$dS=S\mu dt+S\sigma dW$$
+
 ```{r}
 mu_2020 <- mean(rendimiento[year(rendimiento)==2020])
 sigma_2020 <- sqrt(var(rendimiento[year(rendimiento)==2020]))
-mu_2020
-sigma_2020
+print(mu_2020)
+print("rendimiento esperado diario")
+
+print(sigma_2020)
+print("volatilidad diaria")
 ```
-dS=S*mu_2020*dt+5*sigma_2020*dW
-$$dS=`r mu_2020`Sdt+`r sigma_2020`SdW$$
-```{r librerias, message=FALSE, include=FALSE}
-library(ggplot2)
-library(tibble)
-library(gridExtra)
-library(knitr)
-library(kableExtra)
-library(tidyverse)
-```
-Simular el precio dentro de 10 días
+
+La ecuación resultante es entonces:
+$$dS=S(0.00176)dt+S(0.03217)dW$$
+
+## Simulación
+###Simulación a 10 días
 
 - Definir n precios aleatorios
 - Definir dt
@@ -424,16 +466,16 @@ d <- length(rendimiento)
 S0 <- as.numeric(precio[d])
 S0
 ```
-Estimancion para el precio del día 25 febrero + 10 días de cotización
+Estimación para el precio del día actual + 10 días de cotización
 
 - Genera las simulaciones
 
-```{r}
+```{r,warning=FALSE}
 n <- 10000
 dt <- 10
 simula <- tibble(epsilon=rnorm(n),dS=S0*mu_2020*dt+S0*sigma_2020*sqrt(dt)*epsilon)
-PE <- S0+mean(simula$dS)
-PE
+PE_10 <- S0+mean(simula$dS)
+PE_10
 ```
 
 Intervalo de confianza
@@ -442,17 +484,81 @@ Intervalo de confianza
 Media_DS <- mean(simula$dS)
 DeSt_DS <- as.numeric(sqrt(var(simula$dS)))
 Z <- qnorm(.975)
-P_Sup <- S0+Media_DS+Z*DeSt_DS
-P_Inf <- S0+Media_DS-Z*DeSt_DS
-P_Sup
-P_Inf
+P_Sup_10 <- S0+Media_DS+Z*DeSt_DS
+P_Inf_10 <- S0+Media_DS-Z*DeSt_DS
+P_Sup_10
+P_Inf_10
 S0
 ```
-qnorm es irte adentro de la tabla
+###Simulación a 20 días
+Estimación para el precio del día actual + 20 días de cotización
+
+- Genera las simulaciones
+
+```{r,warning=FALSE}
+n <- 10000
+dt <- 20
+simula <- tibble(epsilon=rnorm(n),dS=S0*mu_2020*dt+S0*sigma_2020*sqrt(dt)*epsilon)
+PE_20 <- S0+mean(simula$dS)
+PE_20
+```
+
+Intervalo de confianza
+
+```{r}
+Media_DS <- mean(simula$dS)
+DeSt_DS <- as.numeric(sqrt(var(simula$dS)))
+Z <- qnorm(.975)
+P_Sup_20 <- S0+Media_DS+Z*DeSt_DS
+P_Inf_20 <- S0+Media_DS-Z*DeSt_DS
+P_Sup_20
+P_Inf_20
+S0
+```
+### Simulación a 40 días
+Estimación para el precio del día actual + 40 días de cotización
+
+- Genera las simulaciones
+
+```{r,warning=FALSE}
+n <- 10000
+dt <- 40
+simula <- tibble(epsilon=rnorm(n),dS=S0*mu_2020*dt+S0*sigma_2020*sqrt(dt)*epsilon)
+PE_40 <- S0+mean(simula$dS)
+PE_40
+```
+
+Intervalo de confianza
+
+```{r}
+Media_DS <- mean(simula$dS)
+DeSt_DS <- as.numeric(sqrt(var(simula$dS)))
+Z <- qnorm(.975)
+P_Sup_40 <- S0+Media_DS+Z*DeSt_DS
+P_Inf_40 <- S0+Media_DS-Z*DeSt_DS
+P_Sup_40
+P_Inf_40
+S0
+```
+### Resumen de las simulaciones
+```{r}
+resumen <- tibble(Diez <- c(PE_10,P_Sup_10,P_Inf_10),
+                  Veinte <- c(PE_20,P_Sup_20,P_Inf_20),
+                  Cuarenta <- c(PE_40,P_Sup_40,P_Inf_40),
+.name_repair = ~ c("Diez días","Veinte días","Treinta días"))
+resumen <- as.data.frame(resumen)
+rownames(resumen) <- c("Valor esperado","Superior 95%","Inferior 95%")
+resumen
+```
+
+
+
+
+
 =======
 4. Vilariño, A. (2020, 21 octubre). La covid-19 cambia la percepción de los riesgos para las empresas. Compromiso Empresarial. https://www.compromisoempresarial.com/rsc/2020/10/la-covid-19-cambia-la-percepcion-de-los-riesgos-para-las-empresas/
 5. José F. Otero 29 de octubre de 2020, 06:53, Horas, H. J. E. P., Horas, H. R. P., Horas, H. R. P., Horas, H. A. P., Buiter, W. H., Téllez, G. S., Vázquez, J. G., J., Ginebra, X., MiguelGonzález, L., Morales, V., & R. (2020, 29 octubre). Servicios móviles en tiempos de Covid-19. El Economista. https://www.eleconomista.com.mx/opinion/Servicios-moviles-en-tiempos-de-Covid-19-20201029-0033.html
 6. Segan, S. (2020, 29 octubre). Tested: SpaceX’s Starlink Satellite Internet Service Is Fast, But It’ll Cost You. PCMAG. https://www.pcmag.com/news/tested-spacexs-starlink-satellite-internet-service-is-fast-but-itll-cost
 7. Nicolás Lucas 12 de marzo de 2019, 14:12, Horas, H. G. K. P., Horas, H. A. P., Por Redacción El Economista Hace 7 horas, Horas, H. R. P., Mundo, K. H., PilarMartínez, M., D., K., K., González, L., R., & González, L. (2019, 13 marzo). Telesites y American Tower, ¿aliados para las redes de 5G en México? El Economista. https://www.eleconomista.com.mx/empresas/Telesites-y-American-Tower-aliados-para-las-redes-de-5G-en-Mexico-20190312-0087.html
 >>>>>>> main
-prueba
+
