@@ -236,7 +236,6 @@ Poner la teoria
 Como se saca el rendimiento
 
 Como sacamos la volatiidad diaria promedio, el renciemiento diario promedio y los anualizados
-
 ```{r}
 rend_diario <- mean(rendimiento)
 rend_diario
@@ -249,67 +248,7 @@ vol_diaria
 vol_anualizada <- sqrt(var(rendimiento)*252)
 vol_anualizada
 ```
-```{r}
-rdp_2016 <- mean(rendimiento[year(rendimiento)==2016])
-rdp_2016
-rap_2016 <- mean(rendimiento[year(rendimiento)==2016])*252
-rap_2016
-vdp_2016 <- sqrt(var(rendimiento[year(rendimiento)==2016]))
-vdp_2016
-vap_2016 <- sqrt(var(rendimiento[year(rendimiento)==2016])*252)
-vap_2016
-```
-```{r}
-rdp_2017 <- mean(rendimiento[year(rendimiento)==2017])
-rdp_2017
-rap_2017 <- mean(rendimiento[year(rendimiento)==2017])*252
-rap_2017
-vdp_2017 <- sqrt(var(rendimiento[year(rendimiento)==2017]))
-vdp_2017
-vap_2017 <- sqrt(var(rendimiento[year(rendimiento)==2017])*252)
-vap_2017
-```
 
-```{r}
-rdp_2018 <- mean(rendimiento[year(rendimiento)==2018])
-rdp_2018
-rap_2018 <- mean(rendimiento[year(rendimiento)==2018])*252
-rap_2018
-vdp_2018 <- sqrt(var(rendimiento[year(rendimiento)==2018]))
-vdp_2018
-vap_2018 <- sqrt(var(rendimiento[year(rendimiento)==2018])*252)
-vap_2018
-```
-```{r}
-rdp_2019 <- mean(rendimiento[year(rendimiento)==2019])
-rdp_2019
-rap_2019 <- mean(rendimiento[year(rendimiento)==2019])*252
-rap_2019
-vdp_2019 <- sqrt(var(rendimiento[year(rendimiento)==2019]))
-vdp_2019
-vap_2019 <- sqrt(var(rendimiento[year(rendimiento)==2019])*252)
-vap_2019
-```
-```{r}
-rdp_2020 <- mean(rendimiento[year(rendimiento)==2020])
-rdp_2020
-rap_2020 <- mean(rendimiento[year(rendimiento)==2020])*252
-rap_2020
-vdp_2020 <- sqrt(var(rendimiento[year(rendimiento)==2020]))
-vdp_2020
-vap_2020 <- sqrt(var(rendimiento[year(rendimiento)==2020])*252)
-vap_2020
-```
-```{r}
-rdp_2021 <- mean(rendimiento[year(rendimiento)==2021])
-rdp_2021
-rap_2021 <- mean(rendimiento[year(rendimiento)==2021])*252
-rap_2021
-vdp_2021 <- sqrt(var(rendimiento[year(rendimiento)==2021]))
-vdp_2021
-vap_2021 <- sqrt(var(rendimiento[year(rendimiento)==2021])*252)
-vap_2021
-```
 # Normalidad del rendimiento, del precio y del log del precio
 
 Teoria que nosotros hemos visto sobre la normalidad del rendimiento y del los del precio
@@ -429,7 +368,7 @@ aux <- 0
 for (annum in c(2016,2017,2018,2019,2020,2021))
   {
   aux <- t.test(as.numeric(rendimiento[year(rendimiento)==annum]))
-  print(aux[['statistic']])+print(annum) 
+  print(aux[['statistic']])+print(annum)
   aux <- 0
 }
 
@@ -554,9 +493,129 @@ rownames(resumen) <- c("Valor esperado","Superior 95%","Inferior 95%")
 resumen
 ```
 
+# Ecuaciones para terminos anuales
 
+$$ \ln_{ST} - \ln_{S0} = (\mu - 1/2 \sigma ^2)dt + \sigma dW$$
 
+Usar los parámetros mu, sigma(anuales) de la distribución del periodo 2020 y construir la ecuación
+lnsT = ln s0" que representa una estimación del comportamiento del precio. Usar esta ecuación
+para construir una simulación usando valores aleatorios y proporcionar una estimación del precio
+dentro de 3, 6, 9 y 12 meses. Incluir un intervalo de confianza al 95% para las estimaciones.
 
+```{r}
+mu_2020_a <- mean(rendimiento[year(rendimiento)==2020])*252
+sigma_2020_a <- sqrt(var(rendimiento[year(rendimiento)==2020])*252)
+print(mu_2020_a)
+print("rendimiento esperado anual")
+
+print(sigma_2020_a)
+print("volatilidad anual")
+```
+
+La ecuación resultante es entonces:
+
+$$ \ln_{ST} - \ln_{S0} = ((0.4435898) - 1/2 (0.5106263)  ^2)dt + (0.5106263) dW$$
+
+- Definir n precios aleatorios
+- Definir dt
+- Definir ln_s0
+```{r}
+d <- length(rendimiento)
+lns0 <- as.numeric(log(precio[d]))
+lns0
+```
+
+# Simulación a 3 meses
+
+```{r,warning=FALSE}
+n <- 10000
+dt <- 1/4
+simula2 <- tibble(epsilon=rnorm(n),lnS=(mu_2020_a-(1/2)*sigma_2020_a**2)*dt+sigma_2020_a*sqrt(dt)*epsilon)
+PE_3 <- lns0+mean(simula2$lnS)
+PE_3
+```
+```{r}
+Media_DS <- mean(simula2$lnS)
+DeSt_DS <- as.numeric(sqrt(var(simula2$lnS)))
+Z <- qnorm(.975)
+P_Sup_3 <- lns0+Media_DS+Z*DeSt_DS
+P_Inf_3 <- lnS0+Media_DS-Z*DeSt_DS
+P_Sup_3
+P_Inf_3
+lns0
+```
+
+# Simulación a 6 meses
+
+```{r,warning=FALSE}
+n <- 10000
+dt <- 1/2
+simula2 <- tibble(epsilon=rnorm(n),lnS=(mu_2020_a-(1/2)*sigma_2020_a**2)*dt+sigma_2020_a*sqrt(dt)*epsilon)
+PE_6 <- lns0+mean(simula2$lnS)
+PE_6
+```
+```{r}
+Media_DS <- mean(simula2$lnS)
+DeSt_DS <- as.numeric(sqrt(var(simula2$lnS)))
+Z <- qnorm(.975)
+P_Sup_6 <- lns0+Media_DS+Z*DeSt_DS
+P_Inf_6 <- lnS0+Media_DS-Z*DeSt_DS
+P_Sup_6
+P_Inf_6
+lns0
+```
+
+# Simulación a 9 meses
+
+```{r,warning=FALSE}
+n <- 10000
+dt <- 3/4
+simula2 <- tibble(epsilon=rnorm(n),lnS=(mu_2020_a-(1/2)*sigma_2020_a**2)*dt+sigma_2020_a*sqrt(dt)*epsilon)
+PE_9 <- lns0+mean(simula2$lnS)
+PE_9
+```
+```{r}
+Media_DS <- mean(simula2$lnS)
+DeSt_DS <- as.numeric(sqrt(var(simula2$lnS)))
+Z <- qnorm(.975)
+P_Sup_9 <- lns0+Media_DS+Z*DeSt_DS
+P_Inf_9 <- lnS0+Media_DS-Z*DeSt_DS
+P_Sup_9
+P_Inf_9
+lns0
+```
+
+# Simulación a 12 meses
+
+```{r,warning=FALSE}
+n <- 10000
+dt <- 1
+simula2 <- tibble(epsilon=rnorm(n),lnS=(mu_2020_a-(1/2)*sigma_2020_a**2)*dt+sigma_2020_a*sqrt(dt)*epsilon)
+PE_12 <- lns0+mean(simula2$lnS)
+PE_12
+```
+```{r}
+Media_DS <- mean(simula2$lnS)
+DeSt_DS <- as.numeric(sqrt(var(simula2$lnS)))
+Z <- qnorm(.975)
+P_Sup_12 <- lns0+Media_DS+Z*DeSt_DS
+P_Inf_12 <- lnS0+Media_DS-Z*DeSt_DS
+P_Sup_12
+P_Inf_12
+lns0
+```
+
+### Resumen de las simulaciones
+```{r}
+resumen <- tibble(Tres <- c(PE_3,P_Sup_3,P_Inf_3),
+                  Seis <- c(PE_6,P_Sup_6,P_Inf_6),
+                  Nueve <- c(PE_9,P_Sup_9,P_Inf_9),
+                  Doce <- c(PE_12,P_Sup_12,P_Inf_12),
+.name_repair = ~ c("Tres meses","Seis meses","Nueve meses","Doce meses"))
+resumen <- as.data.frame(resumen)
+rownames(resumen) <- c("Valor esperado","Superior 95%","Inferior 95%")
+resumen
+```
 
 =======
 4. Vilariño, A. (2020, 21 octubre). La covid-19 cambia la percepción de los riesgos para las empresas. Compromiso Empresarial. https://www.compromisoempresarial.com/rsc/2020/10/la-covid-19-cambia-la-percepcion-de-los-riesgos-para-las-empresas/
