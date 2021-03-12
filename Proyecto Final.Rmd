@@ -455,3 +455,4 @@ qnorm es irte adentro de la tabla
 6. Segan, S. (2020, 29 octubre). Tested: SpaceX’s Starlink Satellite Internet Service Is Fast, But It’ll Cost You. PCMAG. https://www.pcmag.com/news/tested-spacexs-starlink-satellite-internet-service-is-fast-but-itll-cost
 7. Nicolás Lucas 12 de marzo de 2019, 14:12, Horas, H. G. K. P., Horas, H. A. P., Por Redacción El Economista Hace 7 horas, Horas, H. R. P., Mundo, K. H., PilarMartínez, M., D., K., K., González, L., R., & González, L. (2019, 13 marzo). Telesites y American Tower, ¿aliados para las redes de 5G en México? El Economista. https://www.eleconomista.com.mx/empresas/Telesites-y-American-Tower-aliados-para-las-redes-de-5G-en-Mexico-20190312-0087.html
 >>>>>>> main
+prueba
