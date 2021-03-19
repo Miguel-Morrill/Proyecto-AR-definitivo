@@ -1,0 +1,146 @@
+---
+title: "Volatilidad Histórica e Implícita"
+author: "Diego Pintor"
+date: "19/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(quantmod)
+library(PerformanceAnalytics)
+library(fBasics)
+library(akima)
+library(normtest)
+library(crop)
+library(lubridate)
+library(tibble)
+library(ggplot2)
+library(fTrading)
+library(derivmkts)
+library(ragtop)
+```
+
+Explicación sobre que es la volatilidad implícita y cuáles son las diferencias que tiene con la volatilidad histórica.
+
+Consideraremos los preciosa observados para un conjunto de opciones el día 18 de marzo con vencimiento a 9 meses. (dt=9/12)
+
+```{r}
+k <- c(8,8.5,9,9.5,11.5,12,15.5,16.5) #Strike
+put <- c(0.05,0.08,0.13,0.19,0.59,0.73,2.16,2.73) #Prima put
+call <- c(7.15,6.71,6.28,5.86,4.31,3.97,2.1,1.74) #Prima Call
+t <- 3/4 #Tiempo de maduración
+S0 <- 14.18 #Precio inicial
+r <- 4.44/100 #Tasa libre de riesgo
+
+```
+
+```{r}
+bscallimpvol(s=S0,k=k[7],r=r,tt=t,price=call[7],d=0)
+```
+Aplicando iterativamente
+```{r}
+vic <- matrix(0,length(k),1)
+for (i in 1:length(k)){
+  vic[i,1] <- bscallimpvol(s=S0,k=k[i],r=r,tt=t,price=call[i],d=0)
+}
+vic
+```
+
+Graficando
+```{r}
+plot(k,vic,type="l")
+```
+
+
+Proceso inverso
+1) Bajar datos de CEMEX SAB de CV (decidir temporalidad)
+2) Obtener estimación de la volatilidad anual. (puede ser usando cualquier modelo o cantidad de datos)
+3) Estimar usando Black Scholes el precio de una call y put con las características definidas anteriormente.
+4) Hacer una compatación entre el valor teórico y el valor real de la opción. 
+5) Concluir sobre la volatilidad implícita y volatilidad histórica.
+
+
+```{r}
+clave <- "CEMEXCPO.MX"
+datos <- new.env()
+getSymbols(clave, from = "2016-01-02", to = today(), warnings = FALSE, env = datos)
+precio <- datos[[clave]][,6] #la información en la columna 6, o sea los precios al cierre
+names(precio) <- clave
+```
+
+Obteniendo Volatilidad Histórica
+```{r}
+activo <- datos[[clave]]
+precio <- activo[,6]
+Rendimiento <- na.omit(diff(log(precio)))
+Rendimiento2 <- Rendimiento**2
+Var_Real<-Rendimiento**2
+Vol_Real<-sqrt(Var_Real)
+```
+```{r}
+n <- nrow(Var_Real)
+Var_Est <- matrix(0,n-1,1)
+a <- seq(0.1,0.99,by=0.01)
+Var_Est[1,1] <- Var_Real[1,1]
+Func <- matrix(0,n-1,1)
+Resultados <- matrix(0,length(a),2)
+colnames(Resultados) <- c('Lambda', 'Sum_FMV')
+j <- 0
+for (L in a) {
+  for (i in 2:(n-1)) {
+    Var_Est[i,1] <- (1-L)*Var_Real[i-1,1] + L*Var_Est[i-1,1] #modelo EWMA 
+    Func[i,1] <- - log(Var_Est[i-1,1]) - Var_Real[i-1,1] / Var_Est[i-1,1]
+  }
+  j <- j+1
+  FMaxAct <- sum(Func)
+  Resultados[j,1] <- L
+  Resultados[j,2] <- FMaxAct
+}
+```
+```{r}
+L_opt <- Resultados[order(Resultados[,'Sum_FMV'], decreasing = TRUE),]
+L_opt <- as.numeric(L_opt[1,1])
+L_opt
+```
+```{r}
+Var_Est_EWMA <- xts(emaTA(Var_Real, lambda = L_opt), order.by= date(Rendimiento))
+Resultados2 <- merge.xts(Var_Real, Var_Est_EWMA)
+```
+```{r}
+Vol_Fut <- as.numeric(sqrt((1-L_opt)*Var_Real[n,]+L_opt*Var_Est_EWMA[n,]))
+Vol_Fut <- Vol_Fut*sqrt(252)
+Vol_Fut
+```
+
+
+Obteniendo Precio de las opciones para Black Scholes
+
+
+
+```{r}
+callsCalc <- matrix(0,length(k),1)
+temp <- 0
+for (i in 1:length(k)){
+  temp <- blackscholes(callput = 1,S0 = S0,K=k[i],r=r,vola=Vol_Fut,time = t)
+  callsCalc[i] <- temp$Price
+}
+callsCalc
+```
+
+
+
+Calculando volatilidad implícita
+
+
+```{r}
+vol_imp_call_teor <- matrix(0,length(k),1)
+for (i in 1:length(k)){
+  vol_imp_call_teor[i,1] <- bscallimpvol(s=S0,k=k[i],r=r,tt=t,price=callsCalc[i,],d=0)
+}
+vol_imp_call_teor
+```
+
+
+
+
+
