@@ -1,0 +1,22 @@
+---
+title: "GARCH"
+author: "Diego Pintor"
+date: "23/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(quantmod)
+library(PerformanceAnalytics)
+library(fBasics)
+library(akima)
+library(normtest)
+library(crop)
+library(lubridate)
+library(tibble)
+library(ggplot2)
+library(fTrading)
+library(fGarch)
+```
+
