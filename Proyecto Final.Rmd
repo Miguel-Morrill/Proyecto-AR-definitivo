@@ -249,6 +249,67 @@ vol_anualizada <- sqrt(var(rendimiento)*252)
 vol_anualizada
 ```
 
+```{r}
+rdp_2016 <- mean(rendimiento[year(rendimiento)==2016])
+rdp_2016
+rap_2016 <- mean(rendimiento[year(rendimiento)==2016])*252
+rap_2016
+vdp_2016 <- sqrt(var(rendimiento[year(rendimiento)==2016]))
+vdp_2016
+vap_2016 <- sqrt(var(rendimiento[year(rendimiento)==2016])*252)
+vap_2016
+```
+```{r}
+rdp_2017 <- mean(rendimiento[year(rendimiento)==2017])
+rdp_2017
+rap_2017 <- mean(rendimiento[year(rendimiento)==2017])*252
+rap_2017
+vdp_2017 <- sqrt(var(rendimiento[year(rendimiento)==2017]))
+vdp_2017
+vap_2017 <- sqrt(var(rendimiento[year(rendimiento)==2017])*252)
+vap_2017
+```
+
+```{r}
+rdp_2018 <- mean(rendimiento[year(rendimiento)==2018])
+rdp_2018
+rap_2018 <- mean(rendimiento[year(rendimiento)==2018])*252
+rap_2018
+vdp_2018 <- sqrt(var(rendimiento[year(rendimiento)==2018]))
+vdp_2018
+vap_2018 <- sqrt(var(rendimiento[year(rendimiento)==2018])*252)
+vap_2018
+```
+```{r}
+rdp_2019 <- mean(rendimiento[year(rendimiento)==2019])
+rdp_2019
+rap_2019 <- mean(rendimiento[year(rendimiento)==2019])*252
+rap_2019
+vdp_2019 <- sqrt(var(rendimiento[year(rendimiento)==2019]))
+vdp_2019
+vap_2019 <- sqrt(var(rendimiento[year(rendimiento)==2019])*252)
+vap_2019
+```
+```{r}
+rdp_2020 <- mean(rendimiento[year(rendimiento)==2020])
+rdp_2020
+rap_2020 <- mean(rendimiento[year(rendimiento)==2020])*252
+rap_2020
+vdp_2020 <- sqrt(var(rendimiento[year(rendimiento)==2020]))
+vdp_2020
+vap_2020 <- sqrt(var(rendimiento[year(rendimiento)==2020])*252)
+vap_2020
+```
+```{r}
+rdp_2021 <- mean(rendimiento[year(rendimiento)==2021])
+rdp_2021
+rap_2021 <- mean(rendimiento[year(rendimiento)==2021])*252
+rap_2021
+vdp_2021 <- sqrt(var(rendimiento[year(rendimiento)==2021]))
+vdp_2021
+vap_2021 <- sqrt(var(rendimiento[year(rendimiento)==2021])*252)
+vap_2021
+```
 # Normalidad del rendimiento, del precio y del log del precio
 
 Teoria que nosotros hemos visto sobre la normalidad del rendimiento y del los del precio
