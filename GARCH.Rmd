@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ---
 title: "GARCH"
 author: "Diego Pintor"
@@ -153,3 +154,127 @@ Se puede concluir que (blablablabla)
 
 ```
 
+=======
+---
+title: "GARCH"
+author: "Diego Pintor"
+date: "23/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(quantmod)
+library(PerformanceAnalytics)
+library(fBasics)
+library(akima)
+library(normtest)
+library(crop)
+library(lubridate)
+library(tibble)
+library(ggplot2)
+library(fTrading)
+library(fGarch)
+```
+
+```{r}
+clave<-"SITESB-1.MX"
+datos <- new.env()
+getSymbols(clave,from="2016-01-01", to=today(), warnings = "FALSE", env = datos)
+activo<-datos[[clave]]
+precio<-activo[,6]
+Rendimiento<-na.omit(diff(log(precio)))
+```
+## [1] "SITESB-1.MX"
+
+```{r}
+independencia <- Box.test(precio, lag=1, type="Ljung-Box",fitdf = 0)
+independencia$statistic
+```
+
+
+```{r}
+garch11 <- garchFit(formula=~garch(1,1), data = Rendimiento, cond.dist = 'norm')
+garch12 <- garchFit(formula=~garch(1,2), data = Rendimiento, cond.dist = 'norm')
+garch21 <- garchFit(formula=~garch(2,1), data = Rendimiento, cond.dist = 'norm')
+garch22 <- garchFit(formula=~garch(2,2), data = Rendimiento, cond.dist = 'norm')
+garch10 <- garchFit(formula=~garch(1,0), data = Rendimiento, cond.dist = 'norm')
+garch20 <- garchFit(formula=~garch(2,0), data = Rendimiento, cond.dist = 'norm')
+```
+```{r}
+parGarch11 <- garch11@fit[["par"]]
+parGarch12 <- garch12@fit[["par"]]
+parGarch21 <- garch21@fit[["par"]]
+parGarch22 <- garch22@fit[["par"]]
+parGarch10 <- garch10@fit[["par"]]
+parGarch20 <- garch20@fit[["par"]]
+```
+
+```{r}
+icsGarch11 <- garch11@fit[["ics"]]
+icsGarch12 <- garch12@fit[["ics"]]
+icsGarch21 <- garch21@fit[["ics"]]
+icsGarch22 <- garch22@fit[["ics"]]
+icsGarch10 <- garch10@fit[["ics"]]
+icsGarch20 <- garch20@fit[["ics"]]
+```
+
+```{r}
+vLGarch11 <- garch11@fit[["value"]][["LogLikelihood"]]
+vLGarch12 <- garch12@fit[["value"]][["LogLikelihood"]]
+vLGarch21 <- garch21@fit[["value"]][["LogLikelihood"]]
+vLGarch22 <- garch22@fit[["value"]][["LogLikelihood"]]
+vLGarch10 <- garch10@fit[["value"]][["LogLikelihood"]]
+vLGarch20 <- garch20@fit[["value"]][["LogLikelihood"]]
+```
+
+```{r}
+AIoptimo <- c(icsGarch10[1],icsGarch11[1],icsGarch12[1],icsGarch20[1], icsGarch21[1], icsGarch22[1])
+AIoptimo <- sort(AIoptimo)
+AIoptimo
+```
+El modelo optimo para los datos es el modelo GARCH 1,1
+```{r}
+est11 <- garch11@h.t
+```
+
+
+```{r}
+Rendimiento2 <- Rendimiento**2
+Var_Real<-Rendimiento**2
+Vol_Real<-sqrt(Var_Real)
+n <- nrow(Var_Real)
+Var_Est <- matrix(0,n-1,1)
+a <- seq(0.1,0.99,by=0.01)
+Var_Est[1,1] <- Var_Real[1,1]
+Func <- matrix(0,n-1,1)
+Resultados <- matrix(0,length(a),2)
+colnames(Resultados) <- c('Lambda', 'Sum_FMV')
+j <- 0
+for (L in a) {
+  for (i in 2:(n-1)) {
+    Var_Est[i,1] <- (1-L)*Var_Real[i-1,1] + L*Var_Est[i-1,1] #modelo EWMA 
+    Func[i,1] <- - log(Var_Est[i-1,1]) - Var_Real[i-1,1] / Var_Est[i-1,1]
+  }
+  j <- j+1
+  FMaxAct <- sum(Func)
+  Resultados[j,1] <- L
+  Resultados[j,2] <- FMaxAct
+}
+
+L_opt <- Resultados[order(Resultados[,'Sum_FMV'], decreasing = TRUE),]
+L_opt <- as.numeric(L_opt[1,1])
+Var_Est_EWMA <- xts(emaTA(Var_Real, lambda = L_opt), order.by= date(Rendimiento))
+Resultados2 <- merge.xts(Var_Real, Var_Est_EWMA, est11)
+
+names(Resultados2) <- c('Var_Real','Var_EWMA','est11')
+plot(Resultados2, legend.loc = 'top', lwd=c(.4,.8), col=c('blue','red'))
+```
+
+```{r}
+Resultados2 <- merge.xts(Var_Real, Var_Est_EWMA, est11)
+names(Resultados2) <- c('Var_Real','Var_EWMA','est11')
+plot(Resultados2, legend.loc = 'top', lwd=c(.4,.8), col=c('blue','yellow', 'red'))
+```
+
+>>>>>>> Stashed changes
