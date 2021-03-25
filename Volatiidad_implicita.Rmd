@@ -1,0 +1,157 @@
+---
+title: "Volatilidad Implícita"
+author: "Diego Pintor, Miguel Moreno, Aranzazú Rendón"
+date: "19/3/2021"
+output: html_document
+---
+
+La volatilidad implícita como su nombre lo dice, esta implicíta en el precio de la prima de una opción, el cuál esta en función de la volatilidad.  
+
+A diferencia de la volátilidad histórica, la cual se basa en datos pasados y todas las observaciones tienen un mismo peso específico, la volatilidad implícita se obtiene a través de la fórmula de Black & Scholes, da estimaciones más certeras y mide la volatilidad esperada.
+
+```{r, include=FALSE}
+library(quantmod)
+library(PerformanceAnalytics)
+library(fBasics)
+library(akima)
+library(normtest)
+library(crop)
+library(lubridate)
+library(tibble)
+library(ggplot2)
+library(derivmkts)
+library(ragtop)
+```
+
+Consideraremos los precios observados para un congunto de opciones el día 18 de marzo con vencimiento a 9 meses (dt = 3/4).
+
+```{r}
+# Precios de las opciones
+k <- c(8, 8.5, 9, 9.5, 11.5, 12, 15.5, 16.5)
+put <- c(0.05, 0.08, 0.13, 0.19, 0.59, 0.73, 2.16, 2.73)
+call <- c(7.15, 6.71, 6.28, 5.86, 4.31, 3.97, 2.1, 1.74)
+
+n <- length(k)
+t <- 3/4 #tiempo de vencimiento (9 meses)
+So <- 14.18 #precio actual del subyacente
+r <- 0.044 #tasa libre de riesgo (cetes a un año)
+```
+
+Volatilidad implicita anualizada a 9 meses a un precio de 15.5
+```{r}
+bscallimpvol(s = So, k = 15.5, r = r, tt = t, d = 0, price = 2.1) #busca la volatilidad implicita de una call. 
+```
+
+```{r}
+vic <- matrix(0,n,1)
+for (i in 1:n) {
+  vic[i,1] <- bscallimpvol(s = So, k = k[i], r = r, tt = t, d = 0, price = call[i])
+}
+vic
+```
+
+Gráfica de las volatilidades (Sonrisas de  volatilidad):  
+Se refiere a las posibles variaciones que los mercados financieros reflejarían de acuerdo a la estabilidad o a la incertidumbre.  
+La sonrisa de la volatilidad intenta predecir la demanda de los inversionistas, mostrando de forma gráfica el precio del ejercicio y la volatilidad implícita.
+```{r}
+plot(k, vic, type="l")
+```
+
+# ACTIVIDAD  
+Proceso inverso.
+
+## 1) Bajar datos de CEMEX SAB de CV  
+```{r, message=FALSE}
+clave<-"CEMEXCPO.MX"
+datos <- new.env()
+getSymbols(clave,from="2016-01-01", to=today(), warnings = "FALSE", env = datos)
+```
+
+## 2) Estimación de volatilidad anual (documenta tu proceso)  
+La volatilidad la calculamos como la desviación estándar de los rendimientos logarítmicos. La cual mide qué tan dispersos están los precios con respecto a su media.  
+Para anualizar la volatilidad, hay que tener en cuenta que esta no se incrementa en la misma proporción que los rendimientos sino que crece como la raíz cuadrada del tiempo.  
+Por lo tanto, hay que multiplicarla por la raíz de los días del año (252).
+```{r}
+activo <- datos[[clave]]
+precio <- activo[,6]
+rendimiento <- na.omit(diff(log(precio)))
+vol_anualizada <- sqrt(var(rendimiento)*252)
+vol_anualizada
+```
+
+## 3) Usando Black and Scholes estimar el precio de una call y una put con las características definidas.  
+Formula de Black & Scholes
+$$
+c = SN(d_1)- Xe^{-rT}N(d_2) 
+$$
+
+$$
+p = Xe^{-rT}N(-d_2)- SN(-d_1)
+$$
+$$
+d_1 = \frac{ln(S/X)+(r+\sigma^2/2)T}{\sigma\sqrt{T}}
+$$
+
+$$
+d_2 = d_1-\sigma\sqrt{T}
+$$
+S = Stock Price  
+K = Strike Price at Expiration  
+r = Risk-free Interest Rate  
+T = Time to Expiration  
+sig = Volatility of the Underlying asset  
+```{r}
+BlackScholes <- function(S, K, r, T, sig, type){
+  
+  if(type=="C"){
+  d1 <- (log(S/K) + (r + sig^2/2)*T) / (sig*sqrt(T))
+  d2 <- d1 - sig*sqrt(T)
+  
+  value <- S*pnorm(d1) - K*exp(-r*T)*pnorm(d2)
+  return(value)}
+  
+  if(type=="P"){
+  d1 <- (log(S/K) + (r + sig^2/2)*T) / (sig*sqrt(T))
+  d2 <- d1 - sig*sqrt(T)
+  
+  value <-  (K*exp(-r*T)*pnorm(-d2) - S*pnorm(-d1))
+  return(value)}
+}
+```
+
+CALL
+```{r}
+callsCalc <- matrix(0,n,1)
+temp <- 0
+for (i in 1:n){
+  callsCalc[i,1] <- BlackScholes(So,k[i],r,t,vol_anualizada,"C")
+}
+callsCalc
+```
+
+PUT
+```{r}
+putCalc <- matrix(0,n,1)
+temp <- 0
+for (i in 1:n){
+  putCalc[i,1] <- BlackScholes(So,k[i],r,t,vol_anualizada,"P")
+}
+putCalc
+```
+
+## 4) Hacer una compararción entre el valor teoríco y el valor real de la opción.  
+```{r}
+df <- data.frame(
+  "Call Real" = call, 
+  "Call Teórico" = callsCalc, 
+  "Put Real" = put,
+  "Put Teórico" = putCalc)
+
+df
+```
+Podemos observar que los precios teóricos calculados con la fórmula de Black & Scholes se asemejan bastante a los precios reales de las opciones, sin embargo, esta fórmula considera que la volatilidad es constante durante la vida de la opción, por lo que podemos notar que cuando el precio real tiene cambios muy drásticos, no es posible para el método Black & Scholes predecir el precio con suficiente exactitud. 
+
+## 5) Conclusión sobre la volatilidad implícita y la volatilidad histórica.  
+La volatilidad implícita, (al estar calculada sobre el precio de las opciones que se comercian en el mercado), refleja las expectativas que tienen los inversionistas respecto a como puede variar un activo en el futuro, miestras que la volatilidad histórica refleja únicamente los cambios reales de los precios.  
+Como sabemos, el precio de los activos estan influenciados por un sinfín de eventos, tanto financieros, como económicos y sociales, y gran parte de los cambios que sufren, se deben a las expectativas que tienen los inversionistas sobre los activos, por lo tanto, la volatilidad implícita se convierte en una herramienta muy interesante al momento de invertir.
+

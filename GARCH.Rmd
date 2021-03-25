@@ -1,7 +1,10 @@
-<<<<<<< Updated upstream
+---
+output:
+  html_document: default
+  pdf_document: default
 ---
 title: "GARCH"
-author: "Diego Pintor"
+author: "Diego Pintor, Miguel Moreno, Aranzazu Rendon"
 date: "23/3/2021"
 output: html_document
 ---
@@ -20,9 +23,12 @@ library(ggplot2)
 library(fTrading)
 library(fGarch)
 ```
+
 # Actividad Modelos ARCH/GARCH
-# 1. Bajando los datos y obteniendo el rendimiento
-```{r, warning=FALSE}
+
+
+## 1. Bajando los datos y obteniendo el rendimiento
+```{r, warning=FALSE, echo=FALSE}
 clave <- "SITESB-1.MX"
 datos <- new.env()
 getSymbols(clave, from = "2016-01-02", to = today(), warnings = FALSE, env = datos)
@@ -30,9 +36,12 @@ precio <- datos[[clave]][,6] #la información en la columna 6, o sea los precios
 names(precio) <- clave
 Rendimiento<-na.omit(diff(log(precio)))
 ```
-# 2.Probando independencia de los precios
 
-```{r}
+
+## 2.Probando independencia de los precios
+
+
+```{r echo=FALSE}
 independencia <- Box.test(precio,lag=1,type="Ljung-Box",fitdf = 0)
 independencia$statistic
 ```
@@ -40,9 +49,12 @@ independencia$statistic
 
 Como el estadístico de la prueba de Box es mayor que 23.20925, valor del estadístico (1156.18), se rechaza la H0 y se acepta la Hipótesis Alternativa, los precios son dependientes.
 
-# 3. Haciendo uso de la función garchFit para estimar los parámetros del modelo.
 
-```{r, include=FALSE}
+
+## 3. Haciendo uso de la función garchFit para estimar los parámetros del modelo.
+
+
+```{r}
 garch11 <- garchFit(formula = ~garch(1,1),data = Rendimiento, cond.dist = "norm")
 garch12 <- garchFit(formula = ~garch(1,2),data = Rendimiento, cond.dist = "norm")
 garch21 <- garchFit(formula = ~garch(2,1),data = Rendimiento, cond.dist = "norm")
@@ -51,7 +63,10 @@ garch10 <- garchFit(formula = ~garch(1,0),data = Rendimiento, cond.dist = "norm"
 garch20 <- garchFit(formula = ~garch(2,0),data = Rendimiento, cond.dist = "norm")
 ```
 
-Extrayendo los parámetros de los modelos Garch creados
+
+
+#### Extrayendo los parámetros de los modelos Garch creados
+
 
 ```{r}
 parGarch11 <- garch11@fit[["par"]]
@@ -63,8 +78,8 @@ parGarch20 <- garch20@fit[["par"]]
 ```
 
 
-Extrayendo Estadísticos de Criterio para encontrar el modelo óptimo que se ajuste a SITESB-1.mx
 
+#### Extrayendo Estadísticos de Criterio para encontrar el modelo óptimo que se ajuste a SITESB-1.mx
 
 
 ```{r}
@@ -77,7 +92,11 @@ icsGarch20 <- garch20@fit[["ics"]]
 ```
 
 
-```{r}
+
+#### Encontrando el modelo optimo:
+
+
+```{r }
 AICoptimo <- c(icsGarch20[1],icsGarch10[1],icsGarch11[1],icsGarch12[1],icsGarch21[1],icsGarch22[1])
 AICoptimo <- sort(AICoptimo)
 AICoptimo
@@ -85,17 +104,26 @@ icsGarch11
 ```
 
 
-El modelo óptimo para los datos es el modelo Garch 1,1 
+El modelo óptimo para los datos es el modelo GARCH[1,1] 
 
-```{r}
+
+
+#### Obtenemos la Varianza a Largo Plazo y despuesVolatilidad a Largo Plazo
+```{r echo=FALSE}
 #parGarch11
 # Obteniendo volatilidad a largo plazo
-VL = as.numeric(parGarch11[2])/as.numeric(1-parGarch11[3]-parGarch11[4])
-VL
+Var_L = as.numeric(parGarch11[2])/as.numeric(1-parGarch11[3]-parGarch11[4])
+Var_L
+Vol_L = sqrt(Var_L)
+Vol_L
 ```
-La volatilidad a largo plazo es 0.0003586
 
-Suma de funciones de verosimilitud
+Obteniendo la volatilidad a largo plazo es 0.01889
+
+
+#### Suma de funciones de verosimilitud
+
+
 ```{r}
 vLGarch11 <- garch11@fit[["value"]][["LogLikelihood"]]
 vLGarch12 <- garch12@fit[["value"]][["LogLikelihood"]]
@@ -106,143 +134,116 @@ vLGarch20 <- garch20@fit[["value"]][["LogLikelihood"]]
 ```
 
 
-# 4. Comparando las estimaciones del modelo contra las estimaciones reales.
 
-```{r}
+## 4. Comparando las estimaciones del modelo contra las estimaciones reales.
+
+
+```{r echo=FALSE}
 Rendimiento2 <- Rendimiento**2
 Var_Real<-Rendimiento**2
+Var_Est_GARCH <- garch11@h.t
+```
+
+
+```{r echo=FALSE}
+Resultados2 <- merge.xts(Var_Real, Var_Est_GARCH)
+names(Resultados2) <- c('Var_Real','Var_Est_GARCH[1,1]')
+plot(Resultados2, legend.loc = 'top', main="Variaciones Reales vs Variaciones GARCH[1,1]", lwd=c(.4,.8), col=c('blue','red'))
+```
+
+
+Podemos concluir que el modelo se ajusta buen en a las estimaciones reales, unicamente diferenciando por los picos que presenta en algunos periodos, sin embargo este modelo es el que mejor se ajusta segun los parametros que medimos.
+
+
+
+## 5. Efectuar estimación futura de la volatilidad.
+
+
+```{r include=FALSE}
 Vol_Real<-sqrt(Var_Real)
+Vol_Est_GARCH <- sqrt(Var_Est_GARCH)
+```
+
+
+```{r echo=FALSE}
+Resultados2 <- merge.xts(Vol_Real, Vol_Est_GARCH)
+names(Resultados2) <- c('Vol_Real','Vol_Est_GARCH[1,1]')
+plot(Resultados2, legend.loc = 'top', main="Volatilidad Real vs Volatilidad GARCH[1,1]", lwd=c(.4,.8), col=c('blue','red'))
+```
+
+
+```{r echo=FALSE}
+Est_Fut_GARCH <- (predict(garch11, n.ahead = 1))
+as.numeric(Est_Fut_GARCH[3])
+```
+La fecha de la estimación futura con una predicción de 0.0254651 de Volatilidad es:
+
+```{r echo=FALSE}
+n <- nrow(Rendimiento)
+Fecha_Est_Fut <- date(Rendimiento[n,])+1
+Fecha_Est_Fut
+```
+
+
+
+# 6. Volatilidad Estimada de Promedio Movil y EWMA
+
+
+## Promedio Movil 
+
+
+```{r echo=FALSE}
 n <- nrow(Var_Real)
-
-Var_Est <- matrix(0,n-1,1) # Variable en la que estimar volatilidad
-
-a <- seq(0.1,0.99,by=0.01)
-Var_Est[1,1] <- Var_Real[1,1] #Mismo valor inicial
-
-Func <- matrix(0,n-1,1)
-
-Resultados <- matrix(0,length(a),3) #Matriz de resultados
-
-colnames(Resultados) <- c('Omega', 'Alpha',"Beta")
-j <- 0
-
-for (L in a) {
-for (i in 2:(n-1)) {
-Var_Est[i,1] <- parGarch11[2]+ parGarch11[3]*Var_Real[i-1,1] + parGarch11[4]*Var_Est[i-1,1] #modelo GARCH
-}
-j <- j+1
-FMaxAct <- sum(Func)
-Resultados[j,1] <- L
-Resultados[j,2] <- FMaxAct
-}
-
-#L_opt <- Resultados[order(Resultados[,'Sum_FMV'], decreasing = TRUE),]
-#L_opt <- as.numeric(L_opt[1,1])
-#Var_Est_EWMA <- xts(emaTA(Var_Real, lambda = L_opt), order.by= date(Rendimiento))
-#Resultados2 <- merge.xts(Var_Real, Var_Est)
-#names(Resultados2) <- c('Var_Real','Var_GARCH1,1')
-#plot(Resultados2, legend.loc = 'top', lwd=c(.4,.8), col=c('blue','red'))
-length(Var_Real)
-length(Var_Est)
-```
-Se puede concluir que (blablablabla)
-
-
-# 5. Efectuar estimación futura de la volatilidad.
-
-```{r}
-
-```
-
-=======
----
-title: "GARCH"
-author: "Diego Pintor"
-date: "23/3/2021"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(quantmod)
-library(PerformanceAnalytics)
-library(fBasics)
-library(akima)
-library(normtest)
-library(crop)
-library(lubridate)
-library(tibble)
-library(ggplot2)
-library(fTrading)
-library(fGarch)
-```
-
-```{r}
-clave<-"SITESB-1.MX"
-datos <- new.env()
-getSymbols(clave,from="2016-01-01", to=today(), warnings = "FALSE", env = datos)
-activo<-datos[[clave]]
-precio<-activo[,6]
-Rendimiento<-na.omit(diff(log(precio)))
-```
-## [1] "SITESB-1.MX"
-
-```{r}
-independencia <- Box.test(precio, lag=1, type="Ljung-Box",fitdf = 0)
-independencia$statistic
+mavback <- function(x,n){ filter(x, c(0, rep(1/n,n)), sides=1) }
+Var_Est5<-xts(mavback(Var_Real, n=5), order.by = date(Var_Real))
+Var_Est10<-xts(mavback(Var_Real, n=10), order.by = date(Var_Real))
+Var_Est20<-xts(mavback(Var_Real, n=20), order.by = date(Var_Real))
+Var_Est40<-xts(mavback(Var_Real, n=40), order.by = date(Var_Real))
+Var_Est<-merge.xts(Var_Est5, Var_Est10, Var_Est20, Var_Est40)
+Var_Est<-merge.xts(Var_Est5, Var_Est10, Var_Est20, Var_Est40)
+names(Var_Est)<-c("M5","M10","M20","M40")
+plot(Var_Est, legend.loc="top", main = "Estimaciones de la Varianza", lwd=.5)
 ```
 
 
-```{r}
-garch11 <- garchFit(formula=~garch(1,1), data = Rendimiento, cond.dist = 'norm')
-garch12 <- garchFit(formula=~garch(1,2), data = Rendimiento, cond.dist = 'norm')
-garch21 <- garchFit(formula=~garch(2,1), data = Rendimiento, cond.dist = 'norm')
-garch22 <- garchFit(formula=~garch(2,2), data = Rendimiento, cond.dist = 'norm')
-garch10 <- garchFit(formula=~garch(1,0), data = Rendimiento, cond.dist = 'norm')
-garch20 <- garchFit(formula=~garch(2,0), data = Rendimiento, cond.dist = 'norm')
-```
-```{r}
-parGarch11 <- garch11@fit[["par"]]
-parGarch12 <- garch12@fit[["par"]]
-parGarch21 <- garch21@fit[["par"]]
-parGarch22 <- garch22@fit[["par"]]
-parGarch10 <- garch10@fit[["par"]]
-parGarch20 <- garch20@fit[["par"]]
-```
-
-```{r}
-icsGarch11 <- garch11@fit[["ics"]]
-icsGarch12 <- garch12@fit[["ics"]]
-icsGarch21 <- garch21@fit[["ics"]]
-icsGarch22 <- garch22@fit[["ics"]]
-icsGarch10 <- garch10@fit[["ics"]]
-icsGarch20 <- garch20@fit[["ics"]]
-```
-
-```{r}
-vLGarch11 <- garch11@fit[["value"]][["LogLikelihood"]]
-vLGarch12 <- garch12@fit[["value"]][["LogLikelihood"]]
-vLGarch21 <- garch21@fit[["value"]][["LogLikelihood"]]
-vLGarch22 <- garch22@fit[["value"]][["LogLikelihood"]]
-vLGarch10 <- garch10@fit[["value"]][["LogLikelihood"]]
-vLGarch20 <- garch20@fit[["value"]][["LogLikelihood"]]
-```
-
-```{r}
-AIoptimo <- c(icsGarch10[1],icsGarch11[1],icsGarch12[1],icsGarch20[1], icsGarch21[1], icsGarch22[1])
-AIoptimo <- sort(AIoptimo)
-AIoptimo
-```
-El modelo optimo para los datos es el modelo GARCH 1,1
-```{r}
-est11 <- garch11@h.t
+```{r echo=FALSE}
+Dif_Est<-merge.xts((Var_Real-Var_Est5)^2,(Var_Real-Var_Est10)^2, (Var_Real-Var_Est20)^2, (Var_Real-Var_Est40)^2)
+names(Dif_Est)<-c("5","10","20","40")
+plot(Dif_Est, legend.loc = "bottom", main="Diferencias en la estimación", lwd=.5)
 ```
 
 
-```{r}
-Rendimiento2 <- Rendimiento**2
-Var_Real<-Rendimiento**2
-Vol_Real<-sqrt(Var_Real)
+```{r echo=FALSE}
+RMSE<-as.data.frame(sqrt(colMeans(na.omit(Dif_Est))))
+names(RMSE)<-c("RMSE")
+RMSE
+```
+
+
+```{r echo=FALSE}
+M_opt<-subset(RMSE, RMSE==min(RMSE))
+m<-as.numeric(row.names(M_opt))
+m
+```
+
+
+```{r echo=FALSE}
+if(m==5){Var_Opt<-Var_Est5}
+if(m==10){Var_Opt<-Var_Est10}
+if(m==20){Var_Opt<-Var_Est20}
+if(m==40){Var_Opt<-Var_Est40}
+Vol_Est_PM = sqrt(Var_Opt)
+```
+
+
+
+## EWMA
+ 
+
+Realizamos una estimación de Volatilidad con el modelo EWMA y al final comparamos las tres estimaciones
+
+
+```{r echo=FALSE}
 n <- nrow(Var_Real)
 Var_Est <- matrix(0,n-1,1)
 a <- seq(0.1,0.99,by=0.01)
@@ -261,20 +262,25 @@ for (L in a) {
   Resultados[j,1] <- L
   Resultados[j,2] <- FMaxAct
 }
+```
 
+
+```{r echo=FALSE}
 L_opt <- Resultados[order(Resultados[,'Sum_FMV'], decreasing = TRUE),]
 L_opt <- as.numeric(L_opt[1,1])
+```
+
+
+```{r echo=FALSE}
 Var_Est_EWMA <- xts(emaTA(Var_Real, lambda = L_opt), order.by= date(Rendimiento))
-Resultados2 <- merge.xts(Var_Real, Var_Est_EWMA, est11)
-
-names(Resultados2) <- c('Var_Real','Var_EWMA','est11')
-plot(Resultados2, legend.loc = 'top', lwd=c(.4,.8), col=c('blue','red'))
+Vol_Est_EWMA <- sqrt(Var_Est_EWMA)
 ```
 
-```{r}
-Resultados2 <- merge.xts(Var_Real, Var_Est_EWMA, est11)
-names(Resultados2) <- c('Var_Real','Var_EWMA','est11')
-plot(Resultados2, legend.loc = 'top', lwd=c(.4,.8), col=c('blue','yellow', 'red'))
+
+```{r echo=FALSE}
+Resultados2 <- merge.xts(Vol_Est_PM, Vol_Est_EWMA, Vol_Est_GARCH)
+names(Resultados2) <- c('Vol_PM','Vol_EWMA','Vol_GARCH[1,1]')
+plot(Resultados2, legend.loc = 'top', main ='Volatilidades de los 3 modelos', lwd=c(.4,.8), col=c('blue','red', 'green'))
 ```
 
->>>>>>> Stashed changes
+
