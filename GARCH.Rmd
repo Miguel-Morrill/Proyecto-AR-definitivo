@@ -1,12 +1,12 @@
 ---
-output:
-  html_document: default
-  pdf_document: default
----
-title: "GARCH"
+title: "Actividad Modelos ARCH/GARCH"
 author: "Diego Pintor, Miguel Moreno, Aranzazu Rendon"
 date: "23/3/2021"
-output: html_document
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_float: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -24,10 +24,9 @@ library(fTrading)
 library(fGarch)
 ```
 
-# Actividad Modelos ARCH/GARCH
 
+# Bajando los datos y obteniendo el rendimiento
 
-## 1. Bajando los datos y obteniendo el rendimiento
 ```{r, warning=FALSE, echo=FALSE}
 clave <- "SITESB-1.MX"
 datos <- new.env()
@@ -38,7 +37,7 @@ Rendimiento<-na.omit(diff(log(precio)))
 ```
 
 
-## 2.Probando independencia de los precios
+# Probando independencia de los precios
 
 
 ```{r echo=FALSE}
@@ -51,7 +50,7 @@ Como el estadístico de la prueba de Box es mayor que 23.20925, valor del estad�
 
 
 
-## 3. Haciendo uso de la función garchFit para estimar los parámetros del modelo.
+# Haciendo uso de la función garchFit para estimar los parámetros del modelo.
 
 
 ```{r}
@@ -65,7 +64,7 @@ garch20 <- garchFit(formula = ~garch(2,0),data = Rendimiento, cond.dist = "norm"
 
 
 
-#### Extrayendo los parámetros de los modelos Garch creados
+## Extrayendo los parámetros de los modelos Garch creados
 
 
 ```{r}
@@ -79,7 +78,7 @@ parGarch20 <- garch20@fit[["par"]]
 
 
 
-#### Extrayendo Estadísticos de Criterio para encontrar el modelo óptimo que se ajuste a SITESB-1.mx
+## Extrayendo Estadísticos de Criterio para encontrar el modelo óptimo que se ajuste a SITESB-1.mx
 
 
 ```{r}
@@ -93,7 +92,7 @@ icsGarch20 <- garch20@fit[["ics"]]
 
 
 
-#### Encontrando el modelo optimo:
+## Encontrando el modelo optimo:
 
 
 ```{r }
@@ -108,7 +107,7 @@ El modelo óptimo para los datos es el modelo GARCH[1,1]
 
 
 
-#### Obtenemos la Varianza a Largo Plazo y despuesVolatilidad a Largo Plazo
+## Obtenemos la Varianza a Largo Plazo y despuesVolatilidad a Largo Plazo
 ```{r echo=FALSE}
 #parGarch11
 # Obteniendo volatilidad a largo plazo
@@ -121,7 +120,7 @@ Vol_L
 Obteniendo la volatilidad a largo plazo es 0.01889
 
 
-#### Suma de funciones de verosimilitud
+## Suma de funciones de verosimilitud
 
 
 ```{r}
@@ -135,7 +134,7 @@ vLGarch20 <- garch20@fit[["value"]][["LogLikelihood"]]
 
 
 
-## 4. Comparando las estimaciones del modelo contra las estimaciones reales.
+# Comparando las estimaciones del modelo contra las estimaciones reales.
 
 
 ```{r echo=FALSE}
@@ -156,7 +155,7 @@ Podemos concluir que el modelo se ajusta buen en a las estimaciones reales, unic
 
 
 
-## 5. Efectuar estimación futura de la volatilidad.
+# Efectuar estimación futura de la volatilidad.
 
 
 ```{r include=FALSE}
@@ -186,7 +185,7 @@ Fecha_Est_Fut
 
 
 
-# 6. Volatilidad Estimada de Promedio Movil y EWMA
+# Volatilidad Estimada de Promedio Movil y EWMA
 
 
 ## Promedio Movil 

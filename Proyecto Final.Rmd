@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
->>>>>>> main
 ---
 title: "Proyecto Final Análisis del Riesgo"
 author: "Diego Pintor, Miguel Moreno, Aranzazú Rendón"
@@ -14,6 +10,7 @@ output:
 ---
 
 # Introducción
+
 ## Descripción del activo que se va a trabajar e identificación de los tipos de riesgos.
   
 Nombre del activo: Telesites S.A.B. de C.V.  
@@ -36,7 +33,7 @@ Tiene como empresa filial a la Operadora de Sites Mexicanos, S.A. de C.V. con cl
   
   Ante una población que demanda constantemente mayor tráfico de datos, aunado a la rápida evolución de las tecnologías en telecomunicaciones y la necesidad de transferencia de información, los operadores de telefonía celular, así como compañías de televisión por cable y empresas de geolocalización, requieren mayor infraestructura para otorgar sus servicios, situación que encamina a un alto potencial de crecimiento hacia adelante para Telesites.  
   
-### Riesgos a los que se enfrenta la empresa:
+## Riesgos a los que se enfrenta la empresa:
 
   Algunos riesgos de mercado a los que se podría enfrentar la empresa sería que entrase una nueva empresa de construcción de torres de telecomunicaciones y que resultara competitiva, o que la empresa no se adapte al mercado creciente del 5G y pierda el liderazgo debido a la entrada de empresas que realicen la instalación de esta tecnología en México. 
   
@@ -47,7 +44,7 @@ Tiene como empresa filial a la Operadora de Sites Mexicanos, S.A. de C.V. con cl
   Un posible competidor que puede existir en el mismo ámbito sería Starlink, el proyecto emprendido por SpaceX, la empresa de Elon Musk, que intenta proveer internet satelital de alta fidelidad a zonas en las que no se pueden instalar tecnologías tradicionales como fibra óptica, antenas de telecomunicaciones o 5G. En este caso, Starlink está por entrar en la fase beta en México, lo que plantea la posibilidad de que pueda competir directamente, sin embargo, hasta octubre del año pasado, el precio del servicio estaba en 99 dólares al mes, sin contar el equipo que rondaba los 500 dólares, por lo que su adopción masiva está en duda al menos en el futuro próximo, por lo que debería prestarse atención al desarrollo de esta tecnología y el potencial impacto que pueda tener a largo plazo. (6)
   
   
-## Análisis histórico del precio y del rendimientos. Causas de cambios
+# Análisis histórico del precio y del rendimientos. Causas de cambios
 
 ```{r eval=TRUE,message=FALSE, include=FALSE}
 library(quantmod)
@@ -62,8 +59,9 @@ precio <- datos[[clave]][,6] #la información en la columna 6, o sea los precios
 names(precio) <- clave
 ```
 
-Precio del activo
-```{r, }
+## Precio del activo
+
+```{r, echo=FALSE}
 chartSeries(precio, name = paste("Precio", clave),up.col = "green", dn.col = "red")
 ```
 
@@ -80,66 +78,11 @@ A nivel interno, esto se debe al crecimiento que tuvo la empresa durante este a�
   Según el informe anual de la empresa, sus ingresos totales de 2019 fueron de 7,296.7 millones de pesos, de los cuales, el más del 60% provinieron de la renta de torres. Mientras que en 2018, ascendieron a 6,603.8 millones y en 2017 a 5,665.7 millones. Por lo que podemos notar un crecimiento constante, lo que es de esperarse ante una población que inova constantemente y demanda de mayor tráfico de datos. Y aunque no se cuenta todavía con el dato oficial de ingresos totales durante el 2020 de la empresa, se sabe que esté incrementó en un 12.4% respecto al mismo trimestre del 2019, por lo tanto se espera un gran crecimiento.
 
   Esto puede deberse en parte a la pandemia actual por Covid-19 que se vive en todo el mundo. Gracias a esta, los servicios de telecomunicaciones han cobrado mayor importancia a nivel global ya que labores rutinarias que requerían interacción presencial han ido migrando paulatinamente a comunicaciones por medio de distintas plataformas de telecomunicaciones, además siendo este también el principal canal de difusión de información sobre la situación actual del mundo y la teleeducación.(5)
-<<<<<<< HEAD
-
-
-# Fuentes citadas 
-Formato de citado: vancouver (por razones de practicidad)
-1. https://www.telesites.com.mx/que-hacemos.html
-2. https://finance.yahoo.com/quote/TSSLF/
-3. Judith Santiago 07 de septiembre de 2020, 18:58, Horas, H. V. T. P., Horas, H. C. B. P., Horas, H. M. P. D. M. P., Horas, H. M. Y. P., AntonioRivera, J., Reuters, Reuters, AntonioRivera, J., Reuters, AntonioRivera, J., & AntonioRivera, J. (2020, 8 septiembre). Acciones de Telesites suben ante posible entrada al IPC. El Economista. https://www.eleconomista.com.mx/mercados/Acciones-de-Telesites-suben-ante-posible-entrada-al-IPC-20200907-0086.html
-4. https://www.compromisoempresarial.com/rsc/2020/10/la-covid-19-cambia-la-percepcion-de-los-riesgos-para-las-empresas/
-5. https://www.eleconomista.com.mx/opinion/Servicios-moviles-en-tiempos-de-Covid-19-20201029-0033.html
-6. https://www.pcmag.com/news/tested-spacexs-starlink-satellite-internet-service-is-fast-but-itll-cost
-=======
----
-title: "Proyecto Final Análisis del Riesgo"
-author: "Diego Pintor, Miguel Moreno, Aranzazú Rendón"
-date: "29/1/2021"
-output:
-  html_document:
-    number_sections: yes
-    toc: yes
-    toc_float: yes
----
-
-
-# Introducción
-## Descripción del activo que se va a trabajar e identificación de los tipos de riesgos
-Nombre del activo: Telesites SAB de CV
-Ticker del activo: SITESB-1
-Fecha de inicio de cotización: 15 de julio de 2016
-Nombre en la bolsa: TSSLF
-Sector: Tecnología de la información.
- 
-  Telesites SAB de CV es una empresa que acorde al manifesto de su sitio: "se dedica principalmente a construir, instalar, mantener, operar y comercializar, de manera directa, diversos tipos de torres y otras estructuras de soporte, así como espacios físicos y demás elementos no electrónicos para la instalación de equipos radiantes de radiocomunicaciones que conforman nuestra Infraestructura de Sitios, así como la prestación de otros servicios conexos relacionados directa o indirectamente al sector telecomunicaciones."(1)
-
-  La empresa fue constituida en 2015 como consecuencia de la Escisión de América Móvil, como una sociedad anónima bursátil de capital variable.
-Sus operaciones se extienden por las 9 regiones en las que se divide la República mexicana en el sector de las telecomunicaciones, proveyendo infraestructura pasiva móvil a través de 16,606 torres y otras 298 en Costa Rica.
-  Sus oficinas centrales se encuentran en Lomas de Chapultepec, Ciudad de México. 
-Tiene como empresa filial a la Operadora de Sites Mexicanos, S.A. de C.V. con clave de cotización en La Bolsa Mexicana de Valores : “OSM”
-
-  La empresa se relaciona con Telcel, ya que sus accionistas en 2014 realizaron una escisión y transfirieron infraestructura a OPSIMEX, empresa que hoy en día es Telesites.
-
-  La empresa es de grandes dimensiones debido a la naturaleza de la industria en la que trabajan, y debido a que su principal fuente de ingresos es la renta de torres de telecomunicaciones, podría considerarse una empresa estable y con mucho futuro, sobre todo debido al crecimiento del mercado de telefonía móvil en México, ya que al establecerse nuevas empresas en este ámbito, tienen que utilizar infraestructura ya establecida o construir nueva.Recientemente la empresa entró al S&P/BMV IPC el pasado 21 de septiembre de 2020 teniendo un incremento en sus acciones desente del 7% antes de su entrada.
-  
-  Algunos riesgos de mercado a los que se podría enfrentar la empresa sería que entrase una nueva empresa de construcción de torres de telecomunicaciones y que resultara competitiva, o que la empresa no se adapte al mercado creciente del 5G y pierda el liderazgo debido a la entrada de empresas que realicen la instalación de esta tecnología en México. Otro riesgo al que se enfrenta sería que alguna de las empresas de telefonía móvil a la que le presta servicios se encuentre en problemas o quiebre, y pierda Telesites los ingresos asociados a esta empresa, sin embargo debido al tamaño del mercado que captan actualmente las empresas de telefonía móvil principalmente establecidas, las barreras de entrada son muy altas, y las que existen actualmente parece que están para quedarse.Ademas la empresa pertenece a Carlos Slim por lo que es complicado que este permita la entrada de nuevos competidores a México.
-
-=======
   
   Telesite lleva años buscando incursionar en el mundo del 5G frente a sus competidores, por lo que lleva desde 2019 explorando distintos nichos de mercado que le permitan expandirse en la implementación futura de infraestructura de 5G, comenzando por un nicho llado rooftops que es instalar antenas en azoteas para abrir espacio a los operadores que buscan explorar las bandas de 3.4 GHz (5G) y 600 MHz. Este dato nos informa que la empresa busca la innovación que es algo que atrae mucho a los inversionistas y hace que la empresa sea mas competitiva sobre otros torreros. El 5G es una tecnologia que necesita demasiada infraestructura por lo que no seria raro escuchar noticias en el futuro de que Telesite decida contruir infraestructura mas compleja para dicha tegnología, por lo que podemos confiar en que la compañia tiene futuro.(7)
->>>>>>> main
 
-Por otro lado, aunque la pandemia actual por covid-19 no es considerado por sí misma como un riesgo pincipal, esta ha acentuado los riesgos existentes y obliga a las empresas a afrontarlos de manera distinta. Siendo el mayor de ellos según el informe Risk in Focus 2021, la ciberseguridad y protección de datos, seguido de posibles riesgos estratégicos, la digitalización y las tecnologías emergentes, lo que implica un riesgo mayor para una empresa de telecomunicaciones como lo es Telesites. (4)
-  
-  Un posible competidor que puede existir en el mismo ámbito sería Starlink, el proyecto emprendido por SpaceX, la empresa de Elon Musk, que intenta proveer internet satelital de alta fidelidad a zonas en las que no se pueden instalar tecnologías tradicionales como fibra óptica, antenas de telecomunicaciones o 5G. En este caso, Starlink está por entrar en la fase beta en México, lo que plantea la posibilidad de que pueda competir directamente, sin embargo, hasta octubre del año pasado, el precio del servicio estaba en 99 dólares al mes, sin contar el equipo que rondaba los 500 dólares, por lo que su adopción masiva está en duda al menos en el futuro próximo, por lo que debería prestarse atención al desarrollo de esta tecnología y el potencial impacto que pueda tener a largo plazo. (6)
 
-# Fuentes citadas 
-Formato de citado: vancouver (por razones de practicidad)
-1. https://www.telesites.com.mx/que-hacemos.html
-2. https://finance.yahoo.com/quote/TSSLF/
-3. Judith Santiago 07 de septiembre de 2020, 18:58, Horas, H. V. T. P., Horas, H. C. B. P., Horas, H. M. P. D. M. P., Horas, H. M. Y. P., AntonioRivera, J., Reuters, Reuters, AntonioRivera, J., Reuters, AntonioRivera, J., & AntonioRivera, J. (2020, 8 septiembre). Acciones de Telesites suben ante posible entrada al IPC. El Economista. https://www.eleconomista.com.mx/mercados/Acciones-de-Telesites-suben-ante-posible-entrada-al-IPC-20200907-0086.html
-<<<<<<< HEAD
+## Hechos Estilizados
 
 ```{r eval=TRUE,message=FALSE, include=FALSE}
 library(quantmod)
@@ -153,8 +96,10 @@ library(ggplot2)
 library(tibble)
 ```
 
-## Hecho estilizado 1
-```{r eval=TRUE,message=FALSE}
+
+### Hecho estilizado 1
+
+```{r eval=TRUE,message=FALSE, include=FALSE}
 clave <- 'SITESB-1.MX'
 datos <- new.env()
 getSymbols(clave,from="2016-01-02",to=today(),warning=FALSE,env=datos)
@@ -162,22 +107,29 @@ precio<-datos[[clave]][,6]
 names(precio) <- clave
 ```
 
-```{r eval=TRUE,message=FALSE}
+```{r eval=TRUE,message=FALSE, echo=FALSE}
 rendimiento<-na.omit(diff(log(precio)))
 #chartSeries(to.monthly(rendimiento),name=paste("Precio",clave),theme="white",up.col="black",dn.col="red")
 chartSeries((rendimiento),name=paste("Precio",clave),theme="white",up.col="black",dn.col="red")
 ```
-## Hecho estilizado 2
+
+
+### Hecho estilizado 2
+
 El precio es una caminata aleatoria
 
-```{r}
+```{r, echo=FALSE}
 chartSeries(precio, name = paste("Precio", clave),up.col = "green", dn.col = "red")
 ```
+
 El precio de mañana es igual al precio de hoy mas un componente aleatorio.
 
-## Hecho estilizado 3  
+
+### Hecho estilizado 3  
+
 La distribución de los rendimientos tiene una forma aproximadamente “acampanada”.
-```{r}
+
+```{r, echo=FALSE}
 ggplot(rendimiento, aes(rendimiento)) + 
   geom_histogram(aes(y = ..density..), fill='white', color = 'brown') + #queremos obtener los valores ponderados de la frecuencia
   geom_density(fill = 'green', alpha=.15)+ #alpha me meustro el 15% del color
@@ -185,26 +137,34 @@ ggplot(rendimiento, aes(rendimiento)) +
 ```
 
 
-## Hecho estilizado 4
+### Hecho estilizado 4
+
 La volatilidad no es constante y es agrupada.
-```{r}
+
+```{r, echo=FALSE}
 chartSeries(to.monthly(precio), theme='white', up.col='green', dn.col='red', name=paste('Precio de', clave))
 addBBands() #el 95% de los precios observados se encuentran entre las bandas, ahi vemos que la volatilidad no es constante.
 ```
+
 Las bandas de bolinger son un intervalo de confianza de la volatilidad del 95%
 
-## Hecho estilizado 5  
+
+### Hecho estilizado 5  
+
 La distribución de los rendimientos presenta leptocurtosis.
-```{r}
+
+```{r, echo=FALSE}
 ggplot(rendimiento, aes(rendimiento)) + theme_bw()+ 
   geom_density(fill = 'green', alpha=.15)+
   stat_function(fun=dnorm, args = list(mean=mean(rendimiento$'SITESB-1.MX'), sd=sd(rendimiento$'SITESB-1.MX')), color='green', size=1.5) #distibucion normal con media y varianza iguales a las de mi vector de rendimiento
   
 ```
-Si el rendimiento se comportara normal, ambas deberían de coincidir.
-Hay muy poca distribucion hacia los lados.
->>>>>>> Stashed changes
 
+Si el rendimiento se comportara normal, ambas deberían de coincidir.
+Aquí podemos ver que hay muy poca distribucion hacia los lados.
+
+
+# Rendimientos y volatilidad. Pruebas de normalidad y estimación de probabilidades
 
 ```{r eval=TRUE,message=FALSE, include=FALSE}
 library(quantmod)
@@ -218,185 +178,147 @@ library(ggplot2)
 library(moments)
 library(tibble)
 ```
-```{r}
-clave <- "SITESB-1.MX"
-datos <- new.env()
-getSymbols(clave, from = "2016-01-01", to = today(), warnings = FALSE, env = datos)
-precio <- datos[[clave]][,6] #la información en la columna 6, o sea los precios al cierre
-names(precio) <- clave
-```
-```{r}
-rendimiento <- na.omit(diff(log(precio)))
-chartSeries(rendimiento, name = paste("Precio", clave), up.col = "green", dn.col = "red")
-```
-# Rendimiento y volatilidad
 
-Poner la teoria
 
-Como se saca el rendimiento
+## Rendimiento y volatilidad
 
-Como sacamos la volatiidad diaria promedio, el renciemiento diario promedio y los anualizados
-```{r}
+### ¿Cómo sacamos el rendimiento diario promedio? ¿Y el anualizado?  
+Uno de nuestros supuestos es que los retornos tienen el comportamiento de una distribución normal. Por lo tanto, podemos utilizar la rentabilidad logarítmica, pues esta permite su uso en probabilidades que se basan en este tipo de distribución.  
+Los rendimientos logarítmicos se suelen calcular sobre los precios de cierre diarios, por lo tanto para sacar el rendimiento promedio diario, basta con calcular el promedio de todos los rendimientos en el período.  
+Para calcular el rendimiento promedio anualizado únicamente debe multiplicarse el cálculo anterior por los días del año (252).
+
+### ¿Cómo se saca la volatilidad diaria promedio? ¿Y la anualizada?  
+La volatilidad se calcula como la desviación estándar de los rendimientos logarítmicos. La cual mide qué tan dispersos están los precio con respecto a su media, al tratarse de precios diarios, la volatilidad diaria promedio es el promedio de todos estos cálculos.  
+Para anualizar la volatilidad, hay que tener en cuenta que esta no se incrementa en la misma proporción que los rendimientos sino que crece como la raíz cuadrada del tiempo.  
+Por lo tanto, hay que multiplicarla por la raíz de los días del año (252).
+
+
+## Rendimiento promedio diario y anualizado:
+
+```{r, echo=FALSE}
 rend_diario <- mean(rendimiento)
+print('Rendimiento Promedio Diario')
 rend_diario
 rend_anualizado <- mean(rendimiento)*252
+print('Rendimiento Promedio Anualizado')
 rend_anualizado
 ```
-```{r}
+
+
+## Volatilidad promedio diaria y anualizada:
+
+```{r, echo=FALSE}
 vol_diaria <- sqrt(var(rendimiento))
-vol_diaria
+print("Volatilidad Diaria")
+as.numeric(vol_diaria)
 vol_anualizada <- sqrt(var(rendimiento)*252)
-vol_anualizada
+print("Volatilidad Anualizada")
+as.numeric(vol_anualizada)
 ```
 
-```{r}
-rdp_2016 <- mean(rendimiento[year(rendimiento)==2016])
-rdp_2016
-rap_2016 <- mean(rendimiento[year(rendimiento)==2016])*252
-rap_2016
-vdp_2016 <- sqrt(var(rendimiento[year(rendimiento)==2016]))
-vdp_2016
-vap_2016 <- sqrt(var(rendimiento[year(rendimiento)==2016])*252)
-vap_2016
-```
-```{r}
-rdp_2017 <- mean(rendimiento[year(rendimiento)==2017])
-rdp_2017
-rap_2017 <- mean(rendimiento[year(rendimiento)==2017])*252
-rap_2017
-vdp_2017 <- sqrt(var(rendimiento[year(rendimiento)==2017]))
-vdp_2017
-vap_2017 <- sqrt(var(rendimiento[year(rendimiento)==2017])*252)
-vap_2017
-```
 
-```{r}
-rdp_2018 <- mean(rendimiento[year(rendimiento)==2018])
-rdp_2018
-rap_2018 <- mean(rendimiento[year(rendimiento)==2018])*252
-rap_2018
-vdp_2018 <- sqrt(var(rendimiento[year(rendimiento)==2018]))
-vdp_2018
-vap_2018 <- sqrt(var(rendimiento[year(rendimiento)==2018])*252)
-vap_2018
-```
-```{r}
-rdp_2019 <- mean(rendimiento[year(rendimiento)==2019])
-rdp_2019
-rap_2019 <- mean(rendimiento[year(rendimiento)==2019])*252
-rap_2019
-vdp_2019 <- sqrt(var(rendimiento[year(rendimiento)==2019]))
-vdp_2019
-vap_2019 <- sqrt(var(rendimiento[year(rendimiento)==2019])*252)
-vap_2019
-```
-```{r}
-rdp_2020 <- mean(rendimiento[year(rendimiento)==2020])
-rdp_2020
-rap_2020 <- mean(rendimiento[year(rendimiento)==2020])*252
-rap_2020
-vdp_2020 <- sqrt(var(rendimiento[year(rendimiento)==2020]))
-vdp_2020
-vap_2020 <- sqrt(var(rendimiento[year(rendimiento)==2020])*252)
-vap_2020
-```
-```{r}
-rdp_2021 <- mean(rendimiento[year(rendimiento)==2021])
-rdp_2021
-rap_2021 <- mean(rendimiento[year(rendimiento)==2021])*252
-rap_2021
-vdp_2021 <- sqrt(var(rendimiento[year(rendimiento)==2021]))
-vdp_2021
-vap_2021 <- sqrt(var(rendimiento[year(rendimiento)==2021])*252)
-vap_2021
-```
-# Normalidad del rendimiento, del precio y del log del precio
-
-Teoria que nosotros hemos visto sobre la normalidad del rendimiento y del los del precio
+## Normalidad del rendimiento, del precio y del log del precio
 
 Se sabe que los rendimientos de los precios de un activo pueden ser modelados como un proceso de Itô. Un proceso de Itô es un proceso estocástico derivado de un proceso Generalizado de Wiener, donde los cambios entre cada intervalo de tiempo se distribuyen siempre como una variable Normal con media 0 y varianza 1 ($N(0,1)$). Entonces se puede enunciar que los rendimientos se comportan de forma normal.
 
-Pruebas formales de normalidad
+## Pruebas formales de normalidad:
 
 Para poder demostrar que efectivamente nuestros rendimientos se comportan de forma normal, es importante realizar pruebas formales de normalidad.
 
-Hay muchas pruebas de normalidad, la mas conocida y la mas usada se llama Jarque-Bera.
-Esta prueba compara el sesgo y la curtosis de la distribución que analizamos con la de una distribución normal. En una normal el sesgo es cero y la curtosis es 3.
+Hay muchas pruebas de normalidad, la mas conocida y la mas usada se llama Jarque-Bera.  
+Esta prueba compara el sesgo y la curtosis de la distribución que analizamos con la de una distribución normal. En una normal el sesgo es cero y la curtosis es 3.  
 Se enuncia una hipótesis nula y una hipótesis alternativa, respectivamente:
 
 - Ho: Hay normalidad en la variable
 
 - Ha: No hay normalidad en la variable
 
-Esta prueba considera que se rechaza Ho, cuando el valor estadistico es mayor a 9.2130.
+Esta prueba considera que se rechaza Ho, cuando el valor estadistico es mayor a 9.2130.  
 Si hacemos la prueba para todo el intervalo del tiempo desde el 2016 hasta la fecha:
 
-```{r}
+```{r, echo=FALSE}
 jbr <- jarque.test(as.numeric(rendimiento))
 jbr[['statistic']]
 ```
-Como la regla dice si el estadistico que calculamos es mayor a 9.2130 rechazamos Ho. En este caso 4102.59 es mayor a 9.2130, entonces rechazo Ho. Por lo tanto NO HAY NORMALIDAD.
+
+Como la regla dice si el estadistico que calculamos es mayor a 9.2130 rechazamos Ho. En este caso 4102.59 es mayor a 9.2130, entonces rechazo Ho. Por lo tanto NO HAY NORMALIDAD.  
+
+
 Realizando la misma prueba Jarque-Bera para el precio:
 
-```{r}
+```{r, echo=FALSE}
 jbp <- jarque.test(as.numeric(precio))
 jbp[['statistic']]
 ```
-También se obtiene un valor mayor a 9.2130, por lo que los precios tampoco son normales.
+
+También se obtiene un valor mayor a 9.2130, por lo que los precios tampoco son normales.  
+
+
 Por último, realizando prueba de normalidad para el logaritmo del precio:
 
-```{r}
+```{r, echo=FALSE}
 jbl <- jarque.test(as.numeric(log(precio)))
 jbl[['statistic']]
 ```
+
 Se obtiene nuevamente un valor mayor a 9.2130, por lo que se rechaza normalidad también.
 
-Una prueba rápida de curtosis nos permite conocer si también la distribución es normal. Recordando, en una distribución normal la Curtosis debe ser **3**.
-```{r}
+
+Una prueba rápida de curtosis nos permite conocer si también la distribución es normal.  
+Recordando, en una distribución normal la Curtosis debe ser **3**.
+
+```{r, echo=FALSE}
 kurtosis(rendimiento)
 skewness(rendimiento)
 ```
+
 Desgraciadamente, para todos los periodos la Curtosis no es 3, es 12.12, por lo que se confirma que la distribución no es normal.
+
 
 A continuación se realizarán pruebas de normalidad Jarque-Bera y Curtosis para todos los periodos de 2016 a 2021, con el fin de encontrar si en algún periodo se distribuyeron de forma normal.
 
-
-```{r}
+```{r, echo=FALSE}
 jbr_2016 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2016]))
 jbr_2016[['statistic']]
 kurtosis(as.numeric(rendimiento[year(rendimiento)==2016]))
 ```
-Para el 2016, los rendimientos son casi **Normales**, con un una Ho aceptada y Curtosis ligeramente mayor a la Normal.
 
-```{r}
+Para el 2016, los rendimientos son casi **Normales**, con una Ho aceptada y Curtosis ligeramente mayor a la Normal.
+
+
+```{r, echo=FALSE}
 jbr_2017 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2017]))
 jbr_2017[['statistic']]
 kurtosis(as.numeric(rendimiento[year(rendimiento)==2017]))
 ```
-Para el 2017, los rendimientos son casi **Normales**, con un una Ho aceptada y Curtosis ligeramente mayor a la Normal.
 
-```{r}
+Para el 2017, los rendimientos son casi **Normales**, con una Ho aceptada y Curtosis ligeramente mayor a la Normal.
+
+```{r, echo=FALSE}
 jbr_2018 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2018]))
 jbr_2018[['statistic']]
 kurtosis(as.numeric(rendimiento[year(rendimiento)==2018]))
 ```
+
 Para el 2018, los rendimientos **No son normales**.
 
-```{r}
+```{r, echo=FALSE}
 jbr_2019 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2019]))
 jbr_2019[['statistic']]
 kurtosis(as.numeric(rendimiento[year(rendimiento)==2019]))
 ```
+
 Para el 2019, los rendimientos **No son normales**.
 
-```{r}
+```{r, echo=FALSE}
 jbr_2020 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2020]))
 jbr_2020[['statistic']]
 kurtosis(as.numeric(rendimiento[year(rendimiento)==2020]))
 ```
+
 Para el 2020, los rendimientos **No son normales**.
 
-```{r}
+```{r, echo=FALSE}
 jbr_2021 <- jarque.test(as.numeric(rendimiento[year(rendimiento)==2021]))
 jbr_2021[['statistic']]
 kurtosis(as.numeric(rendimiento[year(rendimiento)==2021]))
@@ -406,8 +328,7 @@ Lo que va del 2021, sus rendmientos son casi **Normales**, con una Ho aceptada y
 
 
 
-
-# Rendimiento cero
+## Rendimiento cero
 
 Saber si estadsticamente el valor del rendimiento es cero
 
@@ -416,12 +337,18 @@ Ha: Media es diferente de cero
 
 Tenemos un estadístico, que se llama t de Student. Si el estadístico que me de R es mayor a 2.3295, rechazar Ho.
 
-Para todo el periodo vamos a tener este comportamiento
-```{r}
+Para todo el período vamos a tener este comportamiento:
+
+```{r, echo=FALSE}
 t <- t.test(as.numeric(rendimiento))
 t[['statistic']]
 ```
-En este caso el estadístico es 0.7539823 por lo cual mi conclusión es que no puedo rechazar Ho, por lo tanto, el rendmiento es cero.
+
+En este caso el estadístico es 0.7539823 por lo cual mi conclusión es que no puedo rechazar Ho, por lo tanto, el rendmiento es cero.  
+
+
+## Pruebas t de Student
+
 A continuación se realizarán las pruebas t de Student para todos los periodos y ver si los rendimientos son cero.
 
 ```{r}
@@ -435,17 +362,22 @@ for (annum in c(2016,2017,2018,2019,2020,2021))
 
 
 ```
+
 Puedo claramente observar para todos los periodos que la Ho de la prueba t de Student se acepta, por lo que los rendimientos de todos serán cero.
 
-# Simulaciones
- 
-## Ecuación ds en terminos diarios (parametros son diarios)
+
+## Simulaciones
+
+### Ecuación dS en terminos diarios (parametros son diarios)
 
 Para la primera ronda de simulaciones, se creará una ecuación usando los parámetros diarios calculados a partir del 2020, y se utilizará para simular el comportamiento del precio de 10, 20 y 40 días con un intervalo de confianza al 95%.
+
 La ecuación tiene que ser:
 $$dS=S\mu dt+S\sigma dW$$
 
-```{r}
+Calculando los valores de $\mu$ y $\sigma$:
+
+```{r, echo=FALSE}
 mu_2020 <- mean(rendimiento[year(rendimiento)==2020])
 sigma_2020 <- sqrt(var(rendimiento[year(rendimiento)==2020]))
 print(mu_2020)
@@ -458,22 +390,24 @@ print("volatilidad diaria")
 La ecuación resultante es entonces:
 $$dS=S(0.00176)dt+S(0.03217)dW$$
 
-## Simulación
-###Simulación a 10 días
+
+### Simulación a 10 días
 
 - Definir n precios aleatorios
-- Definir dt
-- Definir S0
-```{r}
+- Definir dt 
+- Definir S0 =
+
+```{r, echo=FALSE}
 d <- length(rendimiento)
 S0 <- as.numeric(precio[d])
 S0
 ```
-Estimación para el precio del día actual + 10 días de cotización
 
 - Genera las simulaciones
 
-```{r,warning=FALSE}
+Estimación para el precio del día actual + 10 días de cotización:
+
+```{r,warning=FALSE, echo=FALSE}
 n <- 10000
 dt <- 10
 simula <- tibble(epsilon=rnorm(n),dS=S0*mu_2020*dt+S0*sigma_2020*sqrt(dt)*epsilon)
@@ -481,9 +415,10 @@ PE_10 <- S0+mean(simula$dS)
 PE_10
 ```
 
-Intervalo de confianza
 
-```{r}
+#### Intervalo de confianza:
+
+```{r, echo=FALSE}
 Media_DS <- mean(simula$dS)
 DeSt_DS <- as.numeric(sqrt(var(simula$dS)))
 Z <- qnorm(.975)
@@ -493,12 +428,17 @@ P_Sup_10
 P_Inf_10
 S0
 ```
-###Simulación a 20 días
-Estimación para el precio del día actual + 20 días de cotización
+
+En 10 días el intervalo de confianza del 95% será:  $15.29 \le S\le 22.65$.
+
+
+### Simulación a 20 días
 
 - Genera las simulaciones
 
-```{r,warning=FALSE}
+Estimación para el precio del día actual + 20 días de cotización:
+
+```{r,warning=FALSE, echo = FALSE}
 n <- 10000
 dt <- 20
 simula <- tibble(epsilon=rnorm(n),dS=S0*mu_2020*dt+S0*sigma_2020*sqrt(dt)*epsilon)
@@ -506,9 +446,9 @@ PE_20 <- S0+mean(simula$dS)
 PE_20
 ```
 
-Intervalo de confianza
+#### Intervalo de confianza
 
-```{r}
+```{r, echo = FALSE}
 Media_DS <- mean(simula$dS)
 DeSt_DS <- as.numeric(sqrt(var(simula$dS)))
 Z <- qnorm(.975)
@@ -518,12 +458,17 @@ P_Sup_20
 P_Inf_20
 S0
 ```
+
+En 20 días el intervalo de confianza del 95% será:  $14.01 \le S\le 24.66$
+
+
 ### Simulación a 40 días
-Estimación para el precio del día actual + 40 días de cotización
 
 - Genera las simulaciones
 
-```{r,warning=FALSE}
+Estimación para el precio del día actual + 40 días de cotización:
+
+```{r,warning=FALSE, echo = FALSE}
 n <- 10000
 dt <- 40
 simula <- tibble(epsilon=rnorm(n),dS=S0*mu_2020*dt+S0*sigma_2020*sqrt(dt)*epsilon)
@@ -531,39 +476,44 @@ PE_40 <- S0+mean(simula$dS)
 PE_40
 ```
 
-Intervalo de confianza
+#### Intervalo de confianza
 
-```{r}
+```{r, echo = FALSE}
 Media_DS <- mean(simula$dS)
 DeSt_DS <- as.numeric(sqrt(var(simula$dS)))
 Z <- qnorm(.975)
 P_Sup_40 <- S0+Media_DS+Z*DeSt_DS
 P_Inf_40 <- S0+Media_DS-Z*DeSt_DS
+print(P_Sup_40)
 P_Sup_40
-P_Inf_40
+print(P_Inf_40)
+print(S0)
 S0
 ```
+
+En 40 días el intervalo de confianza del 95% será:  $12.37 \le S\le 27.39$
+
+
 ### Resumen de las simulaciones
-```{r}
+
+```{r, echo = FALSE}
 resumen <- tibble(Diez <- c(PE_10,P_Sup_10,P_Inf_10),
                   Veinte <- c(PE_20,P_Sup_20,P_Inf_20),
                   Cuarenta <- c(PE_40,P_Sup_40,P_Inf_40),
-.name_repair = ~ c("Diez días","Veinte días","Treinta días"))
+.name_repair = ~ c("Diez días","Veinte días","Cuarenta días"))
 resumen <- as.data.frame(resumen)
 rownames(resumen) <- c("Valor esperado","Superior 95%","Inferior 95%")
 resumen
 ```
 
-# Ecuaciones para terminos anuales
+
+## Ecuaciones para terminos anuales
 
 $$ \ln_{ST} - \ln_{S0} = (\mu - 1/2 \sigma ^2)dt + \sigma dW$$
 
-Usar los parámetros mu, sigma(anuales) de la distribución del periodo 2020 y construir la ecuación
-lnsT = ln s0" que representa una estimación del comportamiento del precio. Usar esta ecuación
-para construir una simulación usando valores aleatorios y proporcionar una estimación del precio
-dentro de 3, 6, 9 y 12 meses. Incluir un intervalo de confianza al 95% para las estimaciones.
+Calculando los valores de $\mu$ y $\sigma$ anuales:
 
-```{r}
+```{r, echo = FALSE}
 mu_2020_a <- mean(rendimiento[year(rendimiento)==2020])*252
 sigma_2020_a <- sqrt(var(rendimiento[year(rendimiento)==2020])*252)
 print(mu_2020_a)
@@ -579,95 +529,122 @@ $$ \ln_{ST} - \ln_{S0} = ((0.4435898) - 1/2 (0.5106263)  ^2)dt + (0.5106263) dW$
 
 - Definir n precios aleatorios
 - Definir dt
-- Definir ln_s0
-```{r}
+- Definir ln_s0 =
+
+```{r, echo = FALSE}
 d <- length(rendimiento)
 lns0 <- as.numeric(log(precio[d]))
 lns0
 ```
 
-# Simulación a 3 meses
 
-```{r,warning=FALSE}
+### Simulación a 3 meses
+
+Estimación del logaritmo natural del precio dentro de 3 meses:
+
+```{r,warning=FALSE, echo = FALSE}
 n <- 10000
 dt <- 1/4
 simula2 <- tibble(epsilon=rnorm(n),lnS=(mu_2020_a-(1/2)*sigma_2020_a**2)*dt+sigma_2020_a*sqrt(dt)*epsilon)
 PE_3 <- lns0+mean(simula2$lnS)
 PE_3
 ```
-```{r}
+
+```{r, echo = FALSE}
 Media_DS <- mean(simula2$lnS)
 DeSt_DS <- as.numeric(sqrt(var(simula2$lnS)))
 Z <- qnorm(.975)
 P_Sup_3 <- lns0+Media_DS+Z*DeSt_DS
-P_Inf_3 <- lnS0+Media_DS-Z*DeSt_DS
+P_Inf_3 <- lns0+Media_DS-Z*DeSt_DS
 P_Sup_3
 P_Inf_3
 lns0
 ```
 
-# Simulación a 6 meses
+En 3 meses el intervalo de confianza del 95% será:  $2.50 \le ln(S)\le 3.50$
 
-```{r,warning=FALSE}
+
+### Simulación a 6 meses
+
+Estimación del logaritmo natural del precio dentro de 6 meses:
+
+```{r,warning=FALSE, echo = FALSE}
 n <- 10000
 dt <- 1/2
 simula2 <- tibble(epsilon=rnorm(n),lnS=(mu_2020_a-(1/2)*sigma_2020_a**2)*dt+sigma_2020_a*sqrt(dt)*epsilon)
 PE_6 <- lns0+mean(simula2$lnS)
 PE_6
 ```
-```{r}
+
+```{r, echo = FALSE}
 Media_DS <- mean(simula2$lnS)
 DeSt_DS <- as.numeric(sqrt(var(simula2$lnS)))
 Z <- qnorm(.975)
 P_Sup_6 <- lns0+Media_DS+Z*DeSt_DS
-P_Inf_6 <- lnS0+Media_DS-Z*DeSt_DS
+P_Inf_6 <- lns0+Media_DS-Z*DeSt_DS
 P_Sup_6
 P_Inf_6
 lns0
 ```
 
-# Simulación a 9 meses
+En 6 meses el intervalo de confianza del 95% será:  $2.29 \le ln(S)\le 4.02$
 
-```{r,warning=FALSE}
+
+### Simulación a 9 meses
+
+Estimación del logaritmo natural del precio dentro de 9 meses:
+
+```{r,warning=FALSE, echo = FALSE}
 n <- 10000
 dt <- 3/4
 simula2 <- tibble(epsilon=rnorm(n),lnS=(mu_2020_a-(1/2)*sigma_2020_a**2)*dt+sigma_2020_a*sqrt(dt)*epsilon)
 PE_9 <- lns0+mean(simula2$lnS)
 PE_9
 ```
-```{r}
+
+```{r, echo = FALSE}
 Media_DS <- mean(simula2$lnS)
 DeSt_DS <- as.numeric(sqrt(var(simula2$lnS)))
 Z <- qnorm(.975)
 P_Sup_9 <- lns0+Media_DS+Z*DeSt_DS
-P_Inf_9 <- lnS0+Media_DS-Z*DeSt_DS
+P_Inf_9 <- lns0+Media_DS-Z*DeSt_DS
 P_Sup_9
 P_Inf_9
 lns0
 ```
 
-# Simulación a 12 meses
+En 9 meses el intervalo de confianza del 95% será:  $2.29 \le ln(S)\le 4.01$
 
-```{r,warning=FALSE}
+
+### Simulación a 12 meses
+
+Estimación del logaritmo natural del precio dentro de 12 meses:
+
+```{r,warning=FALSE, echo = FALSE}
 n <- 10000
 dt <- 1
 simula2 <- tibble(epsilon=rnorm(n),lnS=(mu_2020_a-(1/2)*sigma_2020_a**2)*dt+sigma_2020_a*sqrt(dt)*epsilon)
 PE_12 <- lns0+mean(simula2$lnS)
 PE_12
 ```
-```{r}
+
+```{r, echo = FALSE}
 Media_DS <- mean(simula2$lnS)
 DeSt_DS <- as.numeric(sqrt(var(simula2$lnS)))
 Z <- qnorm(.975)
 P_Sup_12 <- lns0+Media_DS+Z*DeSt_DS
-P_Inf_12 <- lnS0+Media_DS-Z*DeSt_DS
+P_Inf_12 <- lns0+Media_DS-Z*DeSt_DS
 P_Sup_12
 P_Inf_12
 lns0
 ```
 
+En 12 meses el intervalo de confianza del 95% será:  $2.23 \le ln(S)\le 4.23$
+
+
 ### Resumen de las simulaciones
-```{r}
+
+```{r, echo = FALSE}
 resumen <- tibble(Tres <- c(PE_3,P_Sup_3,P_Inf_3),
                   Seis <- c(PE_6,P_Sup_6,P_Inf_6),
                   Nueve <- c(PE_9,P_Sup_9,P_Inf_9),
@@ -678,10 +655,26 @@ rownames(resumen) <- c("Valor esperado","Superior 95%","Inferior 95%")
 resumen
 ```
 
-=======
+## Con todos estos elementos establecer una discusión sobre lo que dice la teoría en relación a la normalidad y las implicaciones del modelo teórico sobre lo datos reales.
+
+Sabemos por el hecho estilizdo número 1, que los rendimientos de un activo se comportan como una variable aleatoria, por lo que utilizamos la distribución normal para aproximar su valor.
+
+Es por esto que sabemos que la ecuación que describe el comportamiento de los rendimientos sigue un proceso de ITO y se comportan como una distribución normal, sin embargo, los precios no.   
+Con este modelo, únicamente puedo trabajar con distribuciones normales, por lo tanto, definimos $Z$ una variable tal que si $Y = \ln{Z}, Y \sim N$, por lo tanto, se dice que Y sigue una distribución Log normal. Es decir, si el logaritmo natural de una variable se comporta más o menos como una distribución normal, decimos que sigue una distribución Log normal.
+
+
+# Fuentes citadas 
+Formato de citado: vancouver (por razones de practicidad)
+1. https://www.telesites.com.mx/que-hacemos.html
+
+2. https://finance.yahoo.com/quote/TSSLF/
+
+3. Judith Santiago 07 de septiembre de 2020, 18:58, Horas, H. V. T. P., Horas, H. C. B. P., Horas, H. M. P. D. M. P., Horas, H. M. Y. P., AntonioRivera, J., Reuters, Reuters, AntonioRivera, J., Reuters, AntonioRivera, J., & AntonioRivera, J. (2020, 8 septiembre). Acciones de Telesites suben ante posible entrada al IPC. El Economista. https://www.eleconomista.com.mx/mercados/Acciones-de-Telesites-suben-ante-posible-entrada-al-IPC-20200907-0086.html
+
 4. Vilariño, A. (2020, 21 octubre). La covid-19 cambia la percepción de los riesgos para las empresas. Compromiso Empresarial. https://www.compromisoempresarial.com/rsc/2020/10/la-covid-19-cambia-la-percepcion-de-los-riesgos-para-las-empresas/
+
 5. José F. Otero 29 de octubre de 2020, 06:53, Horas, H. J. E. P., Horas, H. R. P., Horas, H. R. P., Horas, H. A. P., Buiter, W. H., Téllez, G. S., Vázquez, J. G., J., Ginebra, X., MiguelGonzález, L., Morales, V., & R. (2020, 29 octubre). Servicios móviles en tiempos de Covid-19. El Economista. https://www.eleconomista.com.mx/opinion/Servicios-moviles-en-tiempos-de-Covid-19-20201029-0033.html
+
 6. Segan, S. (2020, 29 octubre). Tested: SpaceX’s Starlink Satellite Internet Service Is Fast, But It’ll Cost You. PCMAG. https://www.pcmag.com/news/tested-spacexs-starlink-satellite-internet-service-is-fast-but-itll-cost
+
 7. Nicolás Lucas 12 de marzo de 2019, 14:12, Horas, H. G. K. P., Horas, H. A. P., Por Redacción El Economista Hace 7 horas, Horas, H. R. P., Mundo, K. H., PilarMartínez, M., D., K., K., González, L., R., & González, L. (2019, 13 marzo). Telesites y American Tower, ¿aliados para las redes de 5G en México? El Economista. https://www.eleconomista.com.mx/empresas/Telesites-y-American-Tower-aliados-para-las-redes-de-5G-en-Mexico-20190312-0087.html
->>>>>>> main
-prueba
