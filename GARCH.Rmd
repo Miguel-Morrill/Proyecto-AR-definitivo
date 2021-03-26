@@ -97,8 +97,9 @@ icsGarch20 <- garch20@fit[["ics"]]
 
 ```{r }
 AICoptimo <- c(icsGarch20[1],icsGarch10[1],icsGarch11[1],icsGarch12[1],icsGarch21[1],icsGarch22[1])
-AICoptimo <- sort(AICoptimo)
 AICoptimo
+AICoptimo_min <- min(AICoptimo)
+AICoptimo_min
 icsGarch11
 ```
 
