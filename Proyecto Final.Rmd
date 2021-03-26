@@ -664,7 +664,9 @@ Con este modelo, únicamente puedo trabajar con distribuciones normales, por lo 
 
 
 # Fuentes citadas 
+
 Formato de citado: vancouver (por razones de practicidad)
+
 1. https://www.telesites.com.mx/que-hacemos.html
 
 2. https://finance.yahoo.com/quote/TSSLF/

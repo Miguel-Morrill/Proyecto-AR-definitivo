@@ -149,6 +149,7 @@ df <- data.frame(
 
 df
 ```
+
 Podemos observar que los precios teóricos calculados con la fórmula de Black & Scholes se asemejan bastante a los precios reales de las opciones, sin embargo, esta fórmula considera que la volatilidad es constante durante la vida de la opción, por lo que podemos notar que cuando el precio real tiene cambios muy drásticos, no es posible para el método Black & Scholes predecir el precio con suficiente exactitud. 
 
 ## 5) Conclusión sobre la volatilidad implícita y la volatilidad histórica.  
