@@ -678,7 +678,7 @@ cov(na.omit(datos_corr))
 ```
 
 ```{r include=FALSE}
-setwd('C:/Users/theso/OneDrive/Documents/Semestre 6/Analisis de Riesgo/modulos/Datos')
+setwd('../Proyecto-AR-definitivo/Datos')
 Emisoras <- read_csv('Emisoras_Completo2.csv')
 Emisoras <- as.matrix(Emisoras)
 ```
