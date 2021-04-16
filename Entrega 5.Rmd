@@ -93,9 +93,10 @@ Vol_Est_PM = sqrt(Var_Opt_PM)
 plot(Vol_Est_PM)
 ```
 
-# EWMA
+# 5.3 Promedios Móviles de Ponderación Exponencial (EWMA)
+[Explicación EWMA]
 
-```{r}
+```{r,include=FALSE}
 library(fTrading)
 ```
 
@@ -103,18 +104,18 @@ library(fTrading)
 Aqui voy a decir que el parametro del modelo se estima con maxima verosimilitud y eso consiste en maximizar la funcion de merosimilitud 
 
 ```{r}
-n <- nrow(Var_Real)
+n <- nrow(Var_Hist)
 Var_Est <- matrix(0,n-1,1)
 a <- seq(0.1,0.99,by=0.01)
-Var_Est[1,1] <- Var_Real[1,1]
+Var_Est[1,1] <- Var_Hist[1,1]
 Func <- matrix(0,n-1,1)
 Resultados <- matrix(0,length(a),2)
 colnames(Resultados) <- c('Lambda', 'Sum_FMV')
 j <- 0
 for (L in a) {
   for (i in 2:(n-1)) {
-    Var_Est[i,1] <- (1-L)*Var_Real[i-1,1] + L*Var_Est[i-1,1] #modelo EWMA 
-    Func[i,1] <- - log(Var_Est[i-1,1]) - Var_Real[i-1,1] / Var_Est[i-1,1]
+    Var_Est[i,1] <- (1-L)*Var_Hist[i-1,1] + L*Var_Est[i-1,1] #modelo EWMA 
+    Func[i,1] <- - log(Var_Est[i-1,1]) - Var_Hist[i-1,1] / Var_Est[i-1,1]
   }
   j <- j+1
   FMaxAct <- sum(Func)
@@ -135,8 +136,10 @@ Aqui yo puedo escribir mi modelo con unn valor especifico de Lambda
 Ahora hagamos estimaciones pasadas, usando EWMA con el L_opt para ver que tal funciona el modelo
 
 ```{r}
-Var_Est_EWMA <- xts(emaTA(Var_Real, lambda = L_opt), order.by= date(Rendimiento))
-Resultados2 <- merge.xts(Var_Est_EWMA, Var_Real)
-names(Resultados2) <- c('Var_EWMA','Var_Real')
+Var_Est_EWMA <- xts(emaTA(Var_Hist, lambda = L_opt), order.by= date(rend))
+Resultados2 <- merge.xts(Var_Est_EWMA, Var_Hist)
+names(Resultados2) <- c('Var_EWMA','Var_Hist')
 plot(Resultados2, legend.loc = 'top', lwd=c(.4,.8), col=c('green','red'))
 ```
+
+
