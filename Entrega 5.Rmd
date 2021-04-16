@@ -1,0 +1,142 @@
+---
+title: "Proyecto Final Entrega 5"
+author: "Diego Pintor, Miguel Morril, Aranzazú Rendón"
+date: "16/4/2021"
+output: html_document
+---
+```{r, include=FALSE}
+library(quantmod)
+library(PerformanceAnalytics)
+library(lubridate)
+library(reshape2)
+library(ggplot2)
+```
+#5. Modelos de Varianza
+
+```{r, include=FALSE}
+#Obtención de Rendimientos
+clave <- "SITESB-1.MX"
+datos <- new.env()
+getSymbols(clave, from = "2016-01-01", to = today(), warnings = FALSE, env = datos)
+precio <- datos[[clave]][,6] 
+names(precio) <- clave
+rend <-na.omit(diff(log(precio)))
+```
+##5.1 Volatilidad Histórica
+
+[Descripción Volatilidad Histórica]
+
+```{r}
+Var_Hist<-rend**2
+Vol_Hist<-sqrt(Var_Hist)
+historica <-merge.xts(rend, Vol_Hist, -Vol_Hist)
+names(historica)<-c("Rendimiento","Volatilidad Positiva","Volatilidad Negativa")
+plot(historica, legend.loc = "top",main="Volatilidad Histórica Observada", lwd=.5)
+```
+
+## 5.2 Promedios Móviles
+[Descripción Promedios Móviles]
+
+Probamos diferentes estimaciones de n numeros de días para poder determinar el modelo que mejor se ajuste a la varianza real.
+
+```{r}
+mavback <- function(x,n){ stats::filter(x, c(0, rep(1/n,n)), sides=1) }
+```
+
+```{r}
+Var_Est5 <- xts(mavback(Var_Hist, n=5), order.by = date(Var_Hist))
+Var_Est10 <- xts(mavback(Var_Hist, n=10), order.by = date(Var_Hist)) 
+Var_Est20 <- xts(mavback(Var_Hist, n=20), order.by = date(Var_Hist)) 
+Var_Est40 <- xts(mavback(Var_Hist, n=40), order.by = date(Var_Hist)) 
+Var_Est <- merge.xts(Var_Est5, Var_Est10, Var_Est20, Var_Est40) 
+Var_Est <- merge.xts(Var_Est5, Var_Est10, Var_Est20, Var_Est40) 
+names(Var_Est) <- c("M5","M10","M20","M40")
+plot(Var_Est, legend.loc="top", main = "Varianzas por Promedios Móviles", lwd=.5)
+```
+
+Graficamos los modelos a m dias 
+
+```{r echo=FALSE}
+Dif_Est <- merge.xts((Var_Hist-Var_Est5)^2,(Var_Hist-Var_Est10)^2, (Var_Hist-Var_Est20)^2, (Var_Hist-Var_Est40)^2)
+names(Dif_Est) <- c("5","10","20","40")
+plot(Dif_Est, legend.loc = "bottom", main="Diferencias en la estimación", lwd=.5)
+```
+
+Obtenemos los diferenciales de cada modelo de m, para asi elegir el menos de todos.
+
+```{r echo=FALSE}
+RMSE <- as.data.frame(sqrt(colMeans(na.omit(Dif_Est))))
+names(RMSE) <- c("RMSE")
+RMSE
+```
+
+Obtenemos el RMSE menor, y ese va a ser nuestra m que vamos a usar para que se ajuste mejor la varianza estimada a la real.
+
+```{r echo=FALSE}
+M_opt <- subset(RMSE, RMSE == min(RMSE))
+m <- as.numeric(row.names(M_opt))
+m
+```
+
+Resulta que el valor del M optimo será m 10
+De todas las estimaciones vamos a usar la optima y compararla con la real
+
+```{r echo=FALSE}
+if(m == 5){Var_Opt_PM <- Var_Est5}
+if(m== 10){Var_Opt_PM <- Var_Est10}
+if(m == 20){Var_Opt_PM <- Var_Est20}
+if(m == 40){Var_Opt_PM <- Var_Est40}
+Vol_Est_PM = sqrt(Var_Opt_PM)
+```
+
+```{r}
+plot(Vol_Est_PM)
+```
+
+# EWMA
+
+```{r}
+library(fTrading)
+```
+
+
+Aqui voy a decir que el parametro del modelo se estima con maxima verosimilitud y eso consiste en maximizar la funcion de merosimilitud 
+
+```{r}
+n <- nrow(Var_Real)
+Var_Est <- matrix(0,n-1,1)
+a <- seq(0.1,0.99,by=0.01)
+Var_Est[1,1] <- Var_Real[1,1]
+Func <- matrix(0,n-1,1)
+Resultados <- matrix(0,length(a),2)
+colnames(Resultados) <- c('Lambda', 'Sum_FMV')
+j <- 0
+for (L in a) {
+  for (i in 2:(n-1)) {
+    Var_Est[i,1] <- (1-L)*Var_Real[i-1,1] + L*Var_Est[i-1,1] #modelo EWMA 
+    Func[i,1] <- - log(Var_Est[i-1,1]) - Var_Real[i-1,1] / Var_Est[i-1,1]
+  }
+  j <- j+1
+  FMaxAct <- sum(Func)
+  Resultados[j,1] <- L
+  Resultados[j,2] <- FMaxAct
+}
+```
+
+Vamos a extraer el valor optimo de Lambda
+
+```{r}
+L_opt <- Resultados[order(Resultados[,'Sum_FMV'], decreasing = TRUE),]
+L_opt <- as.numeric(L_opt[1,1])
+L_opt
+```
+Aqui yo puedo escribir mi modelo con unn valor especifico de Lambda
+
+Ahora hagamos estimaciones pasadas, usando EWMA con el L_opt para ver que tal funciona el modelo
+
+```{r}
+Var_Est_EWMA <- xts(emaTA(Var_Real, lambda = L_opt), order.by= date(Rendimiento))
+Resultados2 <- merge.xts(Var_Est_EWMA, Var_Real)
+names(Resultados2) <- c('Var_EWMA','Var_Real')
+plot(Resultados2, legend.loc = 'top', lwd=c(.4,.8), col=c('green','red'))
+```
