@@ -683,7 +683,8 @@ cov(na.omit(datos_corr))
 
 ```{r include=FALSE}
 library(tidyverse)
-setwd('C:/Users/theso/OneDrive/Documents/Semestre 6/Analisis de Riesgo/Proyecto-AR-definitivo/Datos')
+x = getwd()
+setwd(paste(x,"/Datos",sep=""))
 Emisoras <- read_csv('Emisoras_Completo2.csv')
 Emisoras <- as.matrix(Emisoras)
 ```
