@@ -2,7 +2,10 @@
 title: "Proyecto Final Entrega 5"
 author: "Diego Pintor, Miguel Morril, Aranzazú Rendón"
 date: "16/4/2021"
-output: html_document
+output: 
+html_document:
+    toc: true
+    toc_float: true
 ---
 ```{r, include=FALSE}
 library(quantmod)
@@ -10,6 +13,7 @@ library(PerformanceAnalytics)
 library(lubridate)
 library(reshape2)
 library(ggplot2)
+library(fGarch)
 ```
 #5. Modelos de Varianza
 
@@ -90,7 +94,8 @@ Vol_Est_PM = sqrt(Var_Opt_PM)
 ```
 
 ```{r}
-plot(Vol_Est_PM)
+plot(merge.xts(Vol_Est_PM,Vol_Hist),legend.loc="top" ,main="Diferencias en la estimación", lwd=.5)
+
 ```
 
 # 5.3 Promedios Móviles de Ponderación Exponencial (EWMA)
@@ -141,5 +146,68 @@ Resultados2 <- merge.xts(Var_Est_EWMA, Var_Hist)
 names(Resultados2) <- c('Var_EWMA','Var_Hist')
 plot(Resultados2, legend.loc = 'top', lwd=c(.4,.8), col=c('green','red'))
 ```
+## 5.4 Modelos de Heterocedasticidad Autorregresiva
+### 5.4.1 ARCH
 
+[Explicación ARCH]
 
+Prueba de Independencia de los Precios
+```{r}
+independencia <- Box.test(precio,lag=1,type="Ljung-Box",fitdf = 0)
+independencia$statistic
+```
+Como el estadístico de la prueba de Box es mayor que 23.20925, se rechaza la H0 y se acepta la Hipótesis Alternativa, los precios son dependientes.
+
+Generando Modelos ARCH de 1 a 5 rezagos.
+```{r, include=FALSE}
+arch1 <- garchFit(formula = ~garch(1,0),data = rend, cond.dist = "norm")
+arch2 <- garchFit(formula = ~garch(2,0),data = rend, cond.dist = "norm")
+arch3 <- garchFit(formula = ~garch(3,0),data = rend, cond.dist = "norm")
+arch4 <- garchFit(formula = ~garch(4,0),data = rend, cond.dist = "norm")
+arch5 <- garchFit(formula = ~garch(5,0),data = rend, cond.dist = "norm")
+ics1 <- arch1@fit[["ics"]]
+ics2 <- arch2@fit[["ics"]]
+ics3 <- arch3@fit[["ics"]]
+ics4 <- arch4@fit[["ics"]]
+ics5 <- arch5@fit[["ics"]]
+AICoptimo <- c(ics1[1],ics2[1],ics3[1],ics4[1],ics5[1])
+```
+```{r}
+AICoptimo
+```
+El mejor modelo es el ARCH con 5 rezagos
+
+```{r}
+
+comp <- merge.xts(sqrt(arch1@h.t),sqrt(arch2@h.t),sqrt(arch3@h.t),sqrt(arch4@h.t),sqrt(arch5@h.t),Vol_Hist,names(c("ARCH 5","Volatilidad Histórica")))
+plot(comp,legend.loc="top",main="Volatilidad Histórica vs ARCH",lw=.5)
+```
+
+### 5.4.2 GARCH
+
+[Explicación Garch]
+Generando Modelos GARCH de 1 a 5 rezagos de p y q.
+```{r, include=FALSE}
+garch1 <- garchFit(formula = ~garch(1,1),data = rend, cond.dist = "norm")
+garch2 <- garchFit(formula = ~garch(2,2),data = rend, cond.dist = "norm")
+garch3 <- garchFit(formula = ~garch(3,3),data = rend, cond.dist = "norm")
+garch4 <- garchFit(formula = ~garch(4,4),data = rend, cond.dist = "norm")
+garch5 <- garchFit(formula = ~garch(5,5),data = rend, cond.dist = "norm")
+gics1 <- garch1@fit[["ics"]]
+gics2 <- garch2@fit[["ics"]]
+gics3 <- garch3@fit[["ics"]]
+gics4 <- garch4@fit[["ics"]]
+gics5 <- garch5@fit[["ics"]]
+AICoptimo <- c(gics1[1],gics2[1],gics3[1],gics4[1],gics5[1])
+```
+```{r}
+AICoptimo
+```
+El mejor modelo es el GARCH con 1 rezago
+
+```{r}
+
+comp <- merge.xts(sqrt(garch1@h.t),sqrt(garch2@h.t),sqrt(garch3@h.t),sqrt(garch4@h.t),sqrt(garch5@h.t),Vol_Hist,names(c("ARCH 5","Volatilidad Histórica")))
+plot(comp,legend.loc="top",main="Volatilidad Histórica vs GARCH",lw=.5)
+```
+  
