@@ -40,7 +40,7 @@ plot(historica, legend.loc = "top",main="Volatilidad Histórica Observada", lwd=
 Probamos diferentes estimaciones de n numeros de días para poder determinar el modelo que mejor se ajuste a la varianza real.
 
 ```{r}
-mavback <- function(x,n){ filter(x, c(0, rep(1/n,n)), sides=1) }
+mavback <- function(x,n){ stats::filter(x, c(0, rep(1/n,n)), sides=1) }
 ```
 
 ```{r}
@@ -51,13 +51,13 @@ Var_Est40 <- xts(mavback(Var_Hist, n=40), order.by = date(Var_Hist))
 Var_Est <- merge.xts(Var_Est5, Var_Est10, Var_Est20, Var_Est40) 
 Var_Est <- merge.xts(Var_Est5, Var_Est10, Var_Est20, Var_Est40) 
 names(Var_Est) <- c("M5","M10","M20","M40")
-plot(Var_Est, legend.loc="top", main = "Estimaciones de la Varianza", lwd=.5)
+plot(Var_Est, legend.loc="top", main = "Varianzas por Promedios Móviles", lwd=.5)
 ```
 
 Graficamos los modelos a m dias 
 
 ```{r echo=FALSE}
-Dif_Est <- merge.xts((Var_Real-Var_Est5)^2,(Var_Real-Var_Est10)^2, (Var_Real-Var_Est20)^2, (Var_Real-Var_Est40)^2)
+Dif_Est <- merge.xts((Var_Hist-Var_Est5)^2,(Var_Hist-Var_Est10)^2, (Var_Hist-Var_Est20)^2, (Var_Hist-Var_Est40)^2)
 names(Dif_Est) <- c("5","10","20","40")
 plot(Dif_Est, legend.loc = "bottom", main="Diferencias en la estimación", lwd=.5)
 ```
