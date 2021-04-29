@@ -1,0 +1,118 @@
+---
+title: "6ta Entrega Proyecto Final"
+author: "Diego Pintor, Miguel Moreno Morril, Aranzazú Rendón"
+output: 
+html_document:
+    toc: true
+    toc_float: true
+---
+```{r, include=FALSE}
+library(quantmod)
+library(PerformanceAnalytics)
+library(lubridate)
+library(reshape2)
+library(ggplot2)
+library(fGarch)
+```
+
+# Parte 6: Valor en Riesgo
+## Construcción del portafolio
+- Seleccionar un activo además del propio y con los dos construir un portafolio que contenga 100 acciones de cada activo. Determinar el Valor en Riesgo paramétrico y no paramétrico del portafolio ficticio a 1,5,10 y 20 días. En el caso de la metodología no paramétrica el estudiante deberá utilizar simulación histórica (con datos desde 2016 y el valor de So del día que se aplique la metodología en clase). En el caso de estimación paramétrica deberá usar el valor de la volatilidad promedio diaria de los últimos seis meses y el valor de So, será el del que se aplique la metodología en clase.
+
+Activo a seleccionar: GFNORTEO.MX
+
+```{r}
+# Obteniendo los históricos y rendimientos de SITESB-1.MX y GFNORTEO.MX
+claves <- c("SITESB-1.MX","GFNORTEO.MX")
+datos <- new.env()
+getSymbols(claves, from = "2016-07-15", to = today(), warnings = FALSE, env = datos)
+precio1 <- datos[["SITESB-1.MX"]][,6] 
+precio2 <- datos[["GFNORTEO.MX"]][,6] 
+names(precio1) <- "SITESB-1.MX"
+names(precio2) <- "GFNORTEO.MX"
+precio <- merge.xts(precio1,precio2)
+rend <-na.omit(diff(log(precio)))
+```
+## VaR Paramétrico
+
+### Determinar el valor real del portafolio
+
+El valor real del portafolio está dado por el último precio registrado de las acciones, multiplicado por la cantidad de acciones que se tiene de esta en el portafolio.
+Para este caso, se seleccionaron 100 acciones de SITESB-1.MX y 100 acciones de GFNORTEO.MX.
+```{r}
+ac1 <- 100 
+ac2 <- 100
+n1 <- length(precio1)
+n2 <- length(precio2)
+v01 <- as.numeric(precio1[n1])
+v02 <- as.numeric(precio2[n2])
+pa1 <- precio1[n1, 1]
+pa2 <- precio2[n2, 1]
+VPorta <- as.numeric(ac1 * pa1 + ac2 * pa2)
+VPorta
+```
+El valor real del portafolio $V_0$ es $13'852.
+
+### Obtener la volatilidad del portafolio
+
+La volatilidad del portafolio está dada por la ecuación $\sigma=\sqrt{w*C+w^T}$, donde $w$ es el vector de pesos del portafolio, y $C$ es la matriz de varianza covarianza.
+
+#### Matriz de Varianza Covarianza
+```{r}
+# Últimos 6 meses
+seisMeses <- c(today()-181,today()-1) #Se usa today()-1 para evitar conflictos
+# Matriz de varianza covarianza
+covarianza <- cov(rend[seisMeses])
+covarianza
+```
+
+#### Vector de pesos $w$
+
+```{r}
+w_1 <- ac1 * pa1 / VPorta
+w_2 <- ac2 * pa2 / VPorta
+w <- cbind(w_1,w_2)
+w
+```
+
+#### Volatilidad del portafolio
+```{r}
+sigma_port <- as.numeric(sqrt(w%*%covarianza%*%t(w)))
+sigma_port
+```
+Este portafolio tiene una volatilidad diaria del 2.93%
+
+### VaR 
+
+El VaR de un portafolio está dado por la expresión
+$$VaR = V_oZ\sigma$$
+
+#### Valores de Z a utilizar
+
+Este proyecto empleará valores de VaR del 99%, 95% y 90%
+```{r}
+Z99 <- qnorm(.01)
+Z95 <- qnorm(.05)
+Z90 <- qnorm(.1)
+z <- c(Z99,Z95,Z90)
+z
+```
+
+#### Construcción del VaR
+
+Se creará una matriz que contiene los valores del VaR para los días seleccionados a los valores especificados de Z.
+```{r}
+diasVaR <- c(1,5,10,20)
+aux <- matrix(nrow = 4,ncol = 3)
+
+for (j in 1:3){
+  for (i in 1:4){
+    aux[i,j] <- diasVaR[i]*VPorta*sigma_port*z[j]
+  }
+}
+VaRParametrico <- as.data.frame(aux)
+VaRParametrico$Dias <- diasVaR
+names(VaRParametrico) <- c("99%","95%","90%","# de Días")
+VaRParametrico
+```
+
