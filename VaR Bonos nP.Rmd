@@ -1,0 +1,99 @@
+---
+title: "VaR BnP"
+output: html_document
+---
+
+```{r}
+library(readxl)
+setwd("C:/Users/theso/OneDrive/Documents/Semestre 6/Analisis de Riesgo/Proyecto-AR-definitivo/Datos")
+TB <- read_xlsx("TB.xlsx")
+TB <- subset(TB,SF43883!="N/E")
+plot(TB, type="l")
+
+```
+```{r}
+n <- nrow(TB)
+VN <- 2500 #nominal
+t <- 3 #vencimiento
+tc <- 0.05 #tasas cupon
+m <- 2 #frecuencia
+Tasa_Inicial <- as.numeric(TB[n,2])/100
+Tasa_Inicial
+```
+
+Para calcular el VaR primero necesitamos, conocer el precio del bono a la tasa actual. Duración Maculay y la modificada.
+
+```{r}
+vn <- 
+```
+
+Generar posibles valores de tasa de int para la sig simulación
+
+Simulación historica
+
+```{r}
+library(PerformanceAnalytics)
+library(lubridate)
+TB$SF43883 <- as.numeric(TB$SF43883)
+TB <- xts(TB$SF43883, order.by = date(TB$Fecha))
+```
+
+```{r}
+Trend <- na.omit(diff(log(TB)))
+```
+
+```{r}
+esc_est <- seq(1:(n-1))
+Tasa_Est <- as.data.frame(Tasa_Inicial*(1+Trend), row.names = paste("Esc_est", esc_est))
+```
+
+Con las tasas estimadas, vamos a construit el precio del bono bajo cada escenario
+
+```{r}
+cupon <- vn*tc
+nf<-t*m
+
+flujos2<-matrix(0, nf, n)
+
+
+
+for (i in 1:nf-1) {
+flujos2[i,1]=cupon
+}
+flujos2[nf,1]<-vn+cupon
+
+
+
+##Traer a VP cada flujo en relación a cada tasa
+for (i in 1:nf) {
+for (j in 2:n) {
+flujos2[i,j]=flujos[i,1]/(1+Tasa_Est[j-1,1])^(i/m)
+}
+}
+pb2<-matrix(colSums(flujos2))
+pb2<-matrix(pb2[2:n])
+
+
+```
+
+```{r}
+fpg <- Precio_Inicial-pb2
+hist(fpg, n=30)
+```
+
+```{r}
+VaR99 <- quantile(fpg, 0.01)
+VaR99
+VaR95 <- quantile(fpg, 0.05)
+VaR95
+```
+
+Graficar 
+
+```{r}
+hist(fpg, n=30)
+abline(v=VaR99, col="red")
+abline(v=VaR95, col="blue")
+```
+
+

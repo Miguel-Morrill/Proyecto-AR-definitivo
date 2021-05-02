@@ -1,0 +1,325 @@
+---
+title: "Tarea VaR Bonos"
+author: "Miguel Morrill"
+date: "27/4/2021"
+output: html_document
+---
+
+
+
+## Metodología del Cálculo del VaR de Bonos Paramétrico
+
+El VaR de Bonos está dado por la fórmula:
+$$VaR = [Z_{(\alpha)}\sigma_{I}]D^*B_tI_t$$
+
+
+
+Donde $D^* = \frac{D}{1+I}$ es el Duration modificado del Bono, $B_t $ es el precio actual del Bono, $\sigma_I $ es la volatilidad de la tasa de Interés del Bono, $I_t $ es la tasa de interés actual del bono.
+Para calcular la $D^*$ se necesita calcular la duración del Bono $D$, dada por la siguiente fórmula:
+$$D = \sum_{t=1}^{T} tw_t $$
+ Donde:
+ $$w_t = \frac{\frac{FC_t}{(1+r)^t}}{B} $$
+ En donde:
+ $$\sum_{t=1}^{T}w_t = 1$$
+ $r$ Es la tasa de interés. $B$ Es el precio del Bono.
+ 
+ $FC_t$ Es el valor presente del flujo en t. $T$ es el total de periodos del Bono.
+ 
+ También, para la tasa de Interés $I$, asumimos que:
+ $\frac{I_{t+1}-I_t}{I_t}$~$N(\mu_I,\sigma^2_I)$.
+ 
+## Cálculo Paramétrico del VaR de Bonos
+```{r}
+# VaR del Bono
+# Flujo a Valor Presente
+vPBono <- vector()
+flujoBono <- c(135,135,135,135,135,135,135,135,1135)
+yrs <- seq(1,9)
+r <- 0.09
+wt <- vector()
+for (t in yrs){
+  vPBono[t] <- flujoBono[t]/((1+r)^t)
+}
+# Precio del Bono
+precioBono <- sum(vPBono)
+
+#Calculando el wt
+for (t in yrs){
+  wt[t] <- vPBono[t]/precioBono
+}
+
+# Calculando t*wt
+twt <- vector()
+for (t in yrs){
+  twt[t] <- t*wt[t]
+}
+
+# Calculando la Duración del Bono
+D <- sum(twt)
+I <- 0.09
+# Calculando la Duration* del Bono
+DMod <- D/(1+I)
+DMod
+```
+
+Cumpliendo todos los requisitos para valcular el VaR del Bono, este se calcularía de la siguiente forma.
+```{r}
+
+Z <- -2.32 # Valor de Z de alpha 99% de confianza
+vol <- 0.00927 # Volatilidad del bono
+VaRBono <- (Z*vol)*DMod*precioBono*I
+VaRBono
+```
+En consecuencia, con 99% de confianza, la pérdida máxima que se puede esperar por la tenencia del bono, en el próximo cambio de la tasa de interés, será de -13.727. En este caso la temporalidad del VaR corresponde con la temporalidad de la tasa de interés. 
+ 
+## Cálculo de la Volatilidad del Bono
+La volatilidad de un Bono está dado por la ecuación:
+$$\sigma_B = \sigma_I D^* I_t $$
+
+```{r}
+VolBono <- vol*DMod*I
+VolBono
+```
+
+ 
+ # Lee el documento que describe y ejemplifica la metodología para determinar el VaR de Bonos.
+# Considera un portafolio que tiene un sólo bono (que llamaremos BONOA) con un valor nominal de $55'000 que paga una tasa cupón semestral del 5% y que tiene una fecha de vencimiento de 4 años. La tasa de interés actual es de 6.5%, y el próximo cambio en la tasa será dentro de 7 días. Determina:
+
+## a) El precio del Bono
+
+El flujo semestral del bono: 
+
+$$55'000(0.05) = 2'750$$
+El precio del Bono:
+
+$$\sum_{i=0.5}^{4}\frac{flujo_i}{(1+0.065)^i}$$
+```{r}
+flujoBono <- c(2750,2750,2750,2750,2750,2750,2750,57750)
+t <- seq(0.5,4,by=0.5)
+rf <- 6.5/100
+vpBono <- vector()
+for (i in seq(length(t))) {
+  vpBono[i] <- flujoBono[i]/((1+rf)^t[i])
+}
+pBonoA <- sum(vpBono)
+pBonoA
+```
+```{r}
+flujoBono <- c(600,600,600,600,600,600,600,600,600,600,600,600,600,600,600,600,600,60600)
+t <- seq(1/6,3,by=1/6)
+rf <- 1.5/100
+vpBono <- vector()
+for (i in seq(length(t))) {
+  vpBono[i] <- flujoBono[i]/((1+rf)^t[i])
+}
+pBonoA <- sum(vpBono)
+pBonoA
+
+wta <- vector()
+for (i in seq(length(t))){
+  wta[i] <- vpBono[i]/pBonoA
+}
+sum(wta)
+
+# Calculando t*wt
+twta <- vector()
+for (i in seq(length(t))){
+  twta[i] <- t[i]*wta[i]
+}
+# Calculando la Duración del Bono
+D <- sum(twta)
+I <- rf
+D
+
+# Calculando la Duration* del Bono
+DMod <- D/(1+I)
+DMod
+
+vol <- 1.5/100
+I <- rf
+VolBonoA <- vol*DMod*I
+VolBonoA
+
+vol <- 1.5/100
+I <- rf
+VolBonoA <- vol*DMod*I
+VolBonoA
+```
+
+El precio del Bono:  $61'896
+
+
+## b) La duración, así como la duración modificada.
+
+Para calcular la duración del bono, se necesita el peso del flujo de efectivo. Esto está dado por la ecuación: 
+
+$$w_t=\frac{\frac{FC_t}{(1+r)^t}}{B} $$
+
+
+```{r}
+wta <- vector()
+for (i in seq(length(t))){
+  wta[i] <- vpBono[i]/pBonoA
+}
+sum(wta)
+```
+
+La duración del Bono entonces está dada por:
+$$D = \sum_{t=1}^{T} tw_t $$
+```{r}
+# Calculando t*wt
+twta <- vector()
+for (i in seq(length(t))){
+  twta[i] <- t[i]*wta[i]
+}
+# Calculando la Duración del Bono
+D <- sum(twta)
+I <- rf
+D
+```
+
+La duración del Bono: 3.433
+
+```{r}
+# Calculando la Duration* del Bono
+DMod <- D/(1+I)
+DMod
+```
+
+La Duration* del Bono es 3.223
+
+## c) Si la volatilidad de la tasa de interés del Bono es de 0.75%, determina la volatilidad del Bono.
+La volatilidad de un Bono está dado por la ecuación:
+$$\sigma_B = \sigma_I D^* I_t $$
+
+```{r}
+vol <- 1.5/100
+I <- rf
+VolBonoA <- vol*DMod*I
+VolBonoA
+```
+La volatilidad del Bono es de 0.1571%
+
+## d) Determina el VaR del bono al 99% de confianza
+
+El VaR de Bonos está dado por la fórmula:
+$$VaR = [Z_{(\alpha)}\sigma_{I}]D^*B_tI_t$$
+
+```{r}
+
+Z <- qnorm(.01) # Valor de Z de alpha 99% de confianza
+VaRBonoA <- (Z*vol)*DMod*pBonoA*I
+VaRBonoA
+```
+
+El VaR de este Bono al 99% de confianza: $-226.29
+
+# Considera un portafolio que tiene un sólo bono (que llamaremos BONOBO) con un valor nominal de $13'000 que paga una tasa cupón anual del 1% y que tiene una fecha de vencimiento de 12 años. La tasa de interés actual es de 3.5%, y el próximo cambio en la tasa será dentro de 7 días. Determina:
+## a) El precio del Bono:
+
+```{r}
+flujoBono <- c(130,130,130,130,130,130,130,130,130,130,130,13130)
+yrs <- seq(1,12)
+rf <- 3.5/100
+vpBono <- vector()
+for (t in yrs) {
+  vpBono[t] <- flujoBono[t]/((1+rf)^t)
+}
+pBonoB <- sum(vpBono)
+pBonoB
+```
+El precio del Bono es: $9'859.416
+
+## b) La duración y la duración modificada:
+```{r}
+wtb <- vector()
+for (t in yrs){
+  wtb[t] <- vpBono[t]/pBonoB
+}
+```
+```{r}
+# Calculando t*wt
+twtb <- vector()
+for (t in yrs){
+  twtb[t] <- t*wtb[t]
+}
+# Calculando la Duración del Bono
+D <- sum(twtb)
+I <- rf
+D
+```
+La Duración del Bono: 11.247.
+```{r}
+# Calculando la Duration* del Bono
+DMod <- D/(1+I)
+DMod
+```
+
+La Duración* del Bono: 10.8668
+
+## c) La volatilidad del Bono
+```{r}
+vol <- 0.75/100
+I <- rf
+VolBonoB <- vol*DMod*I
+VolBonoB
+```
+
+La Volatilidad del Bono: 0.2852%
+
+## d) Si la volatilidad de la tasa de interés del bono es de 0.75%, determina el VaR del bono al 99% de confianza.
+```{r}
+
+Z <- qnorm(.01) # Valor de Z de alpha 99% de confianza
+VaRBonoB <- (Z*vol)*DMod*pBonoB*I
+VaRBonoB
+```
+El VaR 99% del BONOB: $-65.43
+
+## e) ¿Cuál es la temporalidad del VaR? Explica
+
+La temporalidad de este VaR es anual, puesto que las tasas y los periodos son anuales.
+
+# Usa la relación entre el VaR individual y el VaR de portafolio para determinar el VaR de un portafolio que contiene el BONOA y el BONOB previamente especificados. Supón que la correlación entre las tasas de interés de ambos bonobos es de 25%.
+
+La relación entre VaR individual y VaR de portafolio esta dada por la ecuación:
+
+$$VaR_{porta}=\sqrt{(VaR_1 VaR_2)\begin{bmatrix}
+1 &\rho  \\ 
+\rho  &1 
+\end{bmatrix}\begin{bmatrix}
+VaR_1\\VaR_2 
+
+\end{bmatrix}}$$
+
+```{r}
+vars <- cbind(VaRBonoA,VaRBonoB)
+corr <- rbind(cbind(1,.25),cbind(.25,1))
+varPorta <- sqrt(vars%*%corr%*%t(vars))
+varPorta
+```
+
+El VaR del portafolio usando la relación: $-250.7795
+
+# Usa la matriz de varianza covarianza para determinar el VaR del portafolio en 4.
+
+El VaR por VarianzaCovarianza está dado por:
+
+$$VaR_{porta}=Z_\alpha(B1+B2)\sqrt{(w_1,w_2)\begin{bmatrix}
+\sigma_{A}^2 &\sigma_{A}\sigma_{B}\rho  \\ 
+\sigma_{A}\sigma_{B}\rho  &\sigma_{B}^2 
+\end{bmatrix}\begin{bmatrix}
+w_1\\w_2 
+\end{bmatrix}}$$
+
+```{r}
+v0portf <- pBonoA+pBonoB
+pesos <- cbind(pBonoA/v0portf,pBonoB/v0portf)
+cv <- VolBonoA*VolBonoB*0.25
+varcov <- rbind(cbind(VolBonoA^2,cv),cbind(cv,VolBonoB^2))
+varPorta <- Z*(v0portf)*sqrt(pesos%*%varcov%*%t(pesos))
+varPorta
+```
+
+El VaR por la matriz de varianza covarianza ha dado el mismo valor que la metodología anterior: $-250.7795
+
